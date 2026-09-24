@@ -95,10 +95,8 @@ body.is-loading { overflow: hidden; }
 }
 
 .envelope-ticket {
-  --zoom-origin-x: 50%;
-  --zoom-origin-y: 50%;
-  --zoom-shift-x: 0px;
-  --zoom-shift-y: 0px;
+  --zoom-tx: 0px;
+  --zoom-ty: 0px;
   --zoom-scale: 24;
 
   position: absolute;
@@ -236,6 +234,7 @@ body.is-loading { overflow: hidden; }
 
 .zoom-letter {
   display: inline-block;
+  position: relative;
 }
 
 .envelope-ticket .ticket-copy {
@@ -418,8 +417,8 @@ body.is-loading { overflow: hidden; }
   transform: translateY(64vh);
   opacity: .98;
   transition:
-    transform .95s cubic-bezier(.22,.78,.16,1),
-    opacity .55s .38s ease;
+    transform .82s cubic-bezier(.22,.78,.16,1),
+    opacity .45s .34s ease;
 }
 
 .golden-loader.is-envelope-drop .envelope-flap {
@@ -435,28 +434,28 @@ body.is-loading { overflow: hidden; }
 }
 
 .golden-loader.is-envelope-drop .envelope-ticket {
-  transform: translateY(-48%) scale(1.015);
-  transition: transform .9s cubic-bezier(.18,.82,.16,1);
+  transform: translateY(-42%) scale(1.012);
+  transition: transform .82s cubic-bezier(.18,.82,.16,1);
 }
 
 .golden-loader.is-ticket-center .envelope-ticket {
   transform: translateY(0) scale(1);
-  transition: transform .74s cubic-bezier(.2,.76,.18,1);
+  transition: transform .62s cubic-bezier(.2,.76,.18,1);
 }
 
 .golden-loader.is-zooming .envelope-ticket {
   z-index: 10;
-  transform-origin: var(--zoom-origin-x) var(--zoom-origin-y);
-  animation: ticketLetterZoom 1.32s cubic-bezier(.24,.72,.12,1) both;
-}
-
-.golden-loader.is-zooming {
-  animation: loaderLetterReveal 1.15s .34s ease-in both;
+  transform-origin: 0 0;
+  animation: ticketLetterZoom 1.34s cubic-bezier(.22,.72,.10,1) both;
 }
 
 .golden-loader.is-zooming .loader-grain {
   opacity: 0;
   transition: opacity .45s ease;
+}
+
+.golden-loader.is-web-reveal {
+  animation: loaderFinalReveal .38s ease-out both;
 }
 
 @keyframes envelopeEnter {
@@ -488,31 +487,31 @@ body.is-loading { overflow: hidden; }
 
 @keyframes ticketLetterZoom {
   0% {
-    transform: translate(0, 0) scale(1);
+    transform: matrix(1, 0, 0, 1, 0, 0);
     opacity: 1;
   }
-  68% {
+  78% {
     opacity: 1;
   }
   100% {
     transform:
-      translate(var(--zoom-shift-x), var(--zoom-shift-y))
-      scale(var(--zoom-scale));
-    opacity: 0;
+      matrix(
+        var(--zoom-scale),
+        0,
+        0,
+        var(--zoom-scale),
+        var(--zoom-tx),
+        var(--zoom-ty)
+      );
+    opacity: 1;
   }
 }
 
-@keyframes loaderLetterReveal {
-  0% {
-    background-color: #030303;
+@keyframes loaderFinalReveal {
+  from {
     opacity: 1;
   }
-  54% {
-    background-color: rgba(3,3,3,.94);
-    opacity: 1;
-  }
-  100% {
-    background-color: transparent;
+  to {
     opacity: 0;
   }
 }

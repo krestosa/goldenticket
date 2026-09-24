@@ -26,30 +26,29 @@
   };
 
   const prepareLetterZoom = () => {
+    // Measure only after the ticket has finished returning to center.
+    // The end transform uses origin 0/0 and an explicit matrix, so the
+    // selected glyph lands exactly at the viewport center at every size.
     const ticketRect = ticket.getBoundingClientRect();
     const letterRect = zoomLetter.getBoundingClientRect();
 
     const localX = letterRect.left + letterRect.width * 0.5 - ticketRect.left;
     const localY = letterRect.top + letterRect.height * 0.5 - ticketRect.top;
-    const originX = (localX / ticketRect.width) * 100;
-    const originY = (localY / ticketRect.height) * 100;
 
-    const letterCenterX = letterRect.left + letterRect.width * 0.5;
-    const letterCenterY = letterRect.top + letterRect.height * 0.5;
-    const shiftX = window.innerWidth * 0.5 - letterCenterX;
-    const shiftY = window.innerHeight * 0.5 - letterCenterY;
-
-    const scaleToFill = Math.max(
+    const scaleToCover = Math.max(
       window.innerWidth / Math.max(1, letterRect.width),
       window.innerHeight / Math.max(1, letterRect.height)
     );
-    const zoomScale = Math.max(18, Math.min(42, scaleToFill * 2.15));
 
-    ticket.style.setProperty("--zoom-origin-x", `${originX.toFixed(3)}%`);
-    ticket.style.setProperty("--zoom-origin-y", `${originY.toFixed(3)}%`);
-    ticket.style.setProperty("--zoom-shift-x", `${shiftX.toFixed(2)}px`);
-    ticket.style.setProperty("--zoom-shift-y", `${shiftY.toFixed(2)}px`);
-    ticket.style.setProperty("--zoom-scale", zoomScale.toFixed(3));
+    // Overshoot enough that the solid I fully covers the viewport before
+    // the site is allowed to appear.
+    const zoomScale = Math.max(22, Math.min(64, scaleToCover * 1.32));
+    const tx = window.innerWidth * 0.5 - ticketRect.left - localX * zoomScale;
+    const ty = window.innerHeight * 0.5 - ticketRect.top - localY * zoomScale;
+
+    ticket.style.setProperty("--zoom-scale", zoomScale.toFixed(4));
+    ticket.style.setProperty("--zoom-tx", `${tx.toFixed(2)}px`);
+    ticket.style.setProperty("--zoom-ty", `${ty.toFixed(2)}px`);
   };
 
   const finish = () => {
@@ -66,6 +65,21 @@
     });
   };
 
+  const revealSiteAtZoomLimit = (event) => {
+    if (event.animationName !== "ticketLetterZoom" || finished) return;
+
+    ticket.removeEventListener("animationend", revealSiteAtZoomLimit);
+    body.classList.add("is-revealed");
+    loader.classList.add("is-web-reveal");
+    later(finish, 420);
+  };
+
+  const startZoom = () => {
+    prepareLetterZoom();
+    ticket.addEventListener("animationend", revealSiteAtZoomLimit);
+    loader.classList.add("is-zooming");
+  };
+
   const play = () => {
     if (finished) return;
 
@@ -79,29 +93,27 @@
       loader.classList.add("is-arriving");
     });
 
+    // 1. Lift only the flap.
     later(() => {
       loader.classList.add("is-flap-up");
-    }, 760);
+    }, 780);
 
+    // 2. Envelope moves down while the ticket rises slightly.
     later(() => {
       loader.classList.add("is-envelope-drop");
-    }, 1510);
+    }, 1580);
 
+    // 3. Ticket returns to the exact visual center.
     later(() => {
       loader.classList.add("is-ticket-center");
-    }, 2250);
+    }, 2500);
 
-    later(() => {
-      prepareLetterZoom();
-      body.classList.add("is-revealed");
-      loader.classList.add("is-zooming");
-    }, 2940);
-
-    later(finish, 4350);
+    // 4. Start the glyph zoom only after the centering transition is complete.
+    later(startZoom, 3220);
   };
 
   window.addEventListener("resize", () => {
-    if (loader.classList.contains("is-zooming")) {
+    if (!loader.classList.contains("is-zooming")) {
       prepareLetterZoom();
     }
   }, { passive: true });
