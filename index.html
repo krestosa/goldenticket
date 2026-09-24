@@ -44,50 +44,174 @@
   </div>
 
   <main class="site-shell" id="site">
-    <section class="hero">
-      <header class="hero-topline">
-        <div class="hero-brand">
-          <img class="hero-logo" src="./assets/sushiclub.svg" alt="SushiClub" />
-          <span class="hero-brand-separator" aria-hidden="true"></span>
-          <img class="hero-anniversary-logo" src="./assets/anniversary-25.svg" alt="25 años" />
-        </div>
-        <span class="hero-channel">DELIVERY &amp; TAKE AWAY</span>
+    <section class="campaign-hero">
+      <header class="campaign-nav">
+        <a class="campaign-nav__logo" href="#top" aria-label="SushiClub">
+          <img src="./assets/sushiclub.svg" alt="SushiClub" />
+        </a>
+
+        <a class="campaign-nav__cta" href="#pedido">PEDÍ ONLINE</a>
       </header>
 
-      <div class="hero-layout">
-        <div class="hero-copy">
-          <h1>
-            <span class="hero-title-white">GOLDEN</span>
-            <span class="hero-title-gold">TICKET</span>
+      <div class="campaign-hero__inner" id="top">
+        <div class="campaign-hero__copy">
+          <h1 class="campaign-title">
+            <span>GOLDEN</span>
+            <span class="campaign-title__gold">TICKET</span>
           </h1>
 
-          <p class="hero-kicker">DELI&amp;TAKE</p>
+          <p class="campaign-eyebrow">DELI&amp;TAKE</p>
 
-          <div class="hero-offer">
-            <p class="hero-description">
-              Un ticket dorado puede estar en tu próximo pedido.<br />
-              Escanealo y obtené un
-            </p>
+          <p class="campaign-hero__body">
+            Encontralo en tu pedido y obtené 50% OFF en el Combinado Aniversario 25p para tu próximo pedido online.
+          </p>
 
-            <strong class="hero-discount">50% OFF</strong>
-
-            <p class="hero-description hero-description--small">
-              en el Combinado Aniversario 25p<br />
-              para tu próximo pedido online.
-            </p>
-          </div>
-
-          <a href="#beneficio" class="hero-cta">
-            <span>CONOCÉ MÁS</span>
-            <span class="hero-cta-arrow">↓</span>
+          <a class="campaign-button campaign-button--light" href="#pedido">
+            <span>PEDÍ ONLINE</span>
+            <span aria-hidden="true">→</span>
           </a>
         </div>
 
-        <div class="hero-media" id="heroMedia" aria-hidden="true">
-          <!-- La imagen principal del hero se coloca acá. -->
+        <div class="campaign-hero__media media-slot media-slot--hero" aria-hidden="true">
+          <!-- IMAGEN HERO -->
+        </div>
+
+        <div class="campaign-scroll" aria-hidden="true">
+          <span>SCROLL</span>
+          <i></i>
         </div>
       </div>
     </section>
+
+    <section class="campaign-section prize-section" id="beneficio">
+      <div class="campaign-container prize-grid">
+        <div class="prize-copy">
+          <p class="section-label">EL PREMIO</p>
+
+          <h2 class="prize-title">
+            <span>50% OFF</span>
+            <small>EN EL COMBINADO<br />ANIVERSARIO 25P</small>
+          </h2>
+        </div>
+
+        <p class="prize-description">
+          Escaneá el código QR de tu Golden Ticket y obtené un cupón del 50% OFF en el Combinado Aniversario 25p para tu próximo pedido online.
+        </p>
+
+        <div class="prize-media media-slot media-slot--prize" aria-hidden="true">
+          <!-- IMAGEN COMBINADO / SUSHI -->
+        </div>
+      </div>
+    </section>
+
+    <section class="campaign-section steps-section">
+      <div class="campaign-container">
+        <p class="section-label">CÓMO FUNCIONA</p>
+
+        <div class="steps-grid">
+          <article class="step-card">
+            <div class="step-card__head">
+              <span class="step-number">01</span>
+              <span class="step-icon step-icon--box" aria-hidden="true"></span>
+            </div>
+            <p>Encontrá el Golden Ticket en tu pedido de Delivery o Take Away.</p>
+          </article>
+
+          <article class="step-card">
+            <div class="step-card__head">
+              <span class="step-number">02</span>
+              <span class="step-icon step-icon--qr" aria-hidden="true"></span>
+            </div>
+            <p>Escaneá el código QR.</p>
+          </article>
+
+          <article class="step-card">
+            <div class="step-card__head">
+              <span class="step-number">03</span>
+              <span class="step-icon step-icon--percent" aria-hidden="true">%</span>
+            </div>
+            <p>Obtené tu cupón del 50% OFF en el Combinado Aniversario 25p para tu próximo pedido online.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="campaign-section anniversary-section">
+      <div class="campaign-container anniversary-grid">
+        <div class="anniversary-media media-slot media-slot--anniversary" aria-hidden="true">
+          <!-- IMAGEN TICKET 25 AÑOS -->
+        </div>
+
+        <div class="anniversary-copy">
+          <p class="section-label">UNA EXPERIENCIA<br />QUE CONTINÚA</p>
+          <h2>
+            <span>25 AÑOS</span>
+            <span>DE MOMENTOS</span>
+            <span>ÚNICOS</span>
+          </h2>
+        </div>
+      </div>
+    </section>
+
+    <section class="campaign-section info-section">
+      <div class="campaign-container info-layout">
+        <p class="section-label info-layout__label">INFORMACIÓN<br />IMPORTANTE</p>
+
+        <div class="info-grid">
+          <article class="info-item">
+            <span class="info-icon info-icon--calendar" aria-hidden="true"></span>
+            <strong>Vigencia</strong>
+            <p>Hasta el 31/10.</p>
+          </article>
+
+          <article class="info-item">
+            <span class="info-icon info-icon--person" aria-hidden="true"></span>
+            <strong>Uso</strong>
+            <p>Una sola vez por persona.</p>
+          </article>
+
+          <article class="info-item">
+            <span class="info-icon info-icon--card" aria-hidden="true"></span>
+            <strong>Acumulable</strong>
+            <p>Solo con Galicia Éminent.</p>
+          </article>
+
+          <article class="info-item">
+            <span class="info-icon info-icon--percent" aria-hidden="true">%</span>
+            <strong>No acumulable</strong>
+            <p>No se suma con el descuento de Delivery / Take Away ni con la acción del domingo 11.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="campaign-section order-section" id="pedido">
+      <div class="campaign-container order-card">
+        <div class="order-card__media media-slot media-slot--phone" aria-hidden="true">
+          <!-- IMAGEN CELULAR -->
+        </div>
+
+        <div class="order-card__copy">
+          <p class="section-label">TU PRÓXIMO PEDIDO</p>
+          <a href="#" class="order-card__link">
+            <span>PEDÍ ONLINE</span>
+            <i aria-hidden="true">→</i>
+          </a>
+          <p class="order-card__sub">Y USÁ TU CUPÓN</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="campaign-footer">
+      <div class="campaign-container campaign-footer__inner">
+        <img src="./assets/sushiclub.svg" alt="SushiClub" />
+
+        <a href="#" class="campaign-footer__legal">
+          <span>BASES, CONDICIONES Y LOCALES ADHERIDOS<br />EN SUSHICLUB.COM.AR/BENEFICIOS</span>
+          <b aria-hidden="true">→</b>
+        </a>
+      </div>
+    </footer>
   </main>
 
   <script src="./app.js"></script>

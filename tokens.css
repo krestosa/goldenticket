@@ -38,6 +38,22 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-Variable.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-Italic-Variable.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 :root {
   /* Color primitives */
   --black-1000: #000000;
@@ -82,7 +98,8 @@
 
   /* Typography */
   --font-display: "Field Gothic XCond", "Arial Narrow", sans-serif;
-  --font-body: "Field Gothic", Arial, Helvetica, sans-serif;
+  --font-label: "Field Gothic", Arial, Helvetica, sans-serif;
+  --font-body: "Inter", Arial, Helvetica, sans-serif;
 
   --font-weight-regular: 400;
   --font-weight-bold: 700;
