@@ -376,38 +376,37 @@ body.is-loading { overflow: hidden; }
   will-change: transform;
 }
 
+.envelope-flap::after {
+  content: "";
+  position: absolute;
+  z-index: 6;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 1px;
+  background: rgba(255,255,255,.035);
+  pointer-events: none;
+}
+
 .envelope-flap-face {
   position: absolute;
   inset: 0;
   transform-origin: 50% 0;
   transform: rotateX(0deg);
-  transform-style: preserve-3d;
   will-change: transform;
 }
 
-.envelope-flap-face::before,
-.envelope-flap-face::after {
+.envelope-flap-face::before {
   content: "";
   position: absolute;
   inset: 0;
   clip-path: polygon(50% 100%, 0 0, 100% 0);
   -webkit-clip-path: polygon(50% 100%, 0 0, 100% 0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.envelope-flap-face::before {
-  transform: translateZ(.1px);
   background:
     linear-gradient(180deg, rgba(255,255,255,.055), transparent 45%),
     linear-gradient(145deg, #191919 0%, #0e0e0e 62%, #060606 100%);
-}
-
-.envelope-flap-face::after {
-  transform: rotateX(180deg) translateZ(.1px);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.025), transparent 55%),
-    linear-gradient(155deg, #151515 0%, #0b0b0b 68%, #050505 100%);
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
 }
 
 .envelope-logo {
@@ -448,7 +447,7 @@ body.is-loading { overflow: hidden; }
 }
 
 .golden-loader.is-flap-behind .envelope-flap {
-  z-index: 2;
+  z-index: 0;
 }
 
 .golden-loader.is-flap-back .envelope-flap-face {
@@ -527,7 +526,7 @@ body.is-loading { overflow: hidden; }
     transform: rotateX(-90deg);
   }
   to {
-    transform: rotateX(-180deg);
+    transform: rotateX(-179.5deg);
   }
 }
 
