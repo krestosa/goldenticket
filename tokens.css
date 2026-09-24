@@ -1,22 +1,38 @@
 @font-face {
-  font-family: "Gazzetta";
-  src: url("./fonts/Gazzetta Regular.otf") format("opentype");
+  font-family: "Field Gothic";
+  src: url("./fonts/FieldGothic-Regular.otf") format("opentype");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Gazzetta";
-  src: url("./fonts/Gazzetta Bold.otf") format("opentype");
+  font-family: "Field Gothic";
+  src: url("./fonts/FieldGothic-Demi.otf") format("opentype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Field Gothic";
+  src: url("./fonts/FieldGothic-Bold.otf") format("opentype");
   font-style: normal;
   font-weight: 700;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Gazzetta";
-  src: url("./fonts/Gazzetta Black.otf") format("opentype");
+  font-family: "Field Gothic XCond";
+  src: url("./fonts/FieldGothic-XCond-Bold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Field Gothic XCond";
+  src: url("./fonts/FieldGothic-XCond-XXBold.otf") format("opentype");
   font-style: normal;
   font-weight: 900;
   font-display: swap;
@@ -65,8 +81,8 @@
   --color-ticket-gold-highlight: var(--gold-200);
 
   /* Typography */
-  --font-display: "Gazzetta", Arial, sans-serif;
-  --font-body: Arial, Helvetica, sans-serif;
+  --font-display: "Field Gothic XCond", "Arial Narrow", sans-serif;
+  --font-body: "Field Gothic", Arial, Helvetica, sans-serif;
 
   --font-weight-regular: 400;
   --font-weight-bold: 700;
