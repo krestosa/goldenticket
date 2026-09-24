@@ -6,7 +6,6 @@
   const instruction = document.getElementById("cutInstruction");
   const cutLine = document.getElementById("cutLine");
   const cutLinePath = document.getElementById("cutLinePath");
-  const cutLineShadow = document.getElementById("cutLineShadow");
   const topHalf = loader?.querySelector(".ticket-half--top");
   const bottomHalf = loader?.querySelector(".ticket-half--bottom");
   const topArt = topHalf?.querySelector(".ticket-art");
@@ -18,7 +17,6 @@
     !trailCanvas ||
     !cutLine ||
     !cutLinePath ||
-    !cutLineShadow ||
     !topHalf ||
     !bottomHalf ||
     !topArt ||
@@ -27,6 +25,7 @@
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+  const mobileProfile = coarsePointer || window.matchMedia("(max-width: 700px)").matches;
   const ctx = trailCanvas.getContext("2d", { alpha: true });
 
   const timers = new Set();
@@ -42,6 +41,7 @@
   let cutCenterY = 0;
   let cutBand = 0;
   let trailFrame = 0;
+  let cutRenderFrame = 0;
   let lastTrailPoint = null;
 
   let direction = 1;
@@ -89,9 +89,13 @@
   };
 
   const clearCutPath = () => {
+    if (cutRenderFrame) {
+      cancelAnimationFrame(cutRenderFrame);
+      cutRenderFrame = 0;
+    }
+
     cutPoints.length = 0;
     cutLinePath.removeAttribute("d");
-    cutLineShadow.removeAttribute("d");
     topArt.style.removeProperty("clip-path");
     topArt.style.removeProperty("-webkit-clip-path");
     bottomArt.style.removeProperty("clip-path");
@@ -126,7 +130,15 @@
     }
 
     cutLinePath.setAttribute("d", d);
-    cutLineShadow.setAttribute("d", d);
+  };
+
+  const scheduleCutRender = () => {
+    if (cutRenderFrame) return;
+
+    cutRenderFrame = requestAnimationFrame(() => {
+      cutRenderFrame = 0;
+      renderCutPath();
+    });
   };
 
   const addCutPoint = (x, y) => {
@@ -144,11 +156,12 @@
     if (last) {
       const dx = point.x - last.x;
       const dy = point.y - last.y;
-      if ((dx * dx) + (dy * dy) < 9) return;
+      const minDistanceSq = mobileProfile ? 49 : 16;
+      if ((dx * dx) + (dy * dy) < minDistanceSq) return;
     }
 
     cutPoints.push(point);
-    renderCutPath();
+    scheduleCutRender();
   };
 
   const getMonotonicBoundary = () => {
@@ -239,7 +252,7 @@
   };
 
   const resizeTrail = () => {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = mobileProfile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
     const width = Math.max(1, window.innerWidth);
     const height = Math.max(1, window.innerHeight);
 
@@ -267,10 +280,17 @@
     if (lastTrailPoint) {
       const dx = point.x - lastTrailPoint.x;
       const dy = point.y - lastTrailPoint.y;
-      if ((dx * dx) + (dy * dy) < 9) return;
+      const minDistanceSq = mobileProfile ? 64 : 16;
+      if ((dx * dx) + (dy * dy) < minDistanceSq) return;
     }
 
     trail.push(point);
+
+    const maxTrailPoints = mobileProfile ? 24 : 48;
+    if (trail.length > maxTrailPoints) {
+      trail.splice(0, trail.length - maxTrailPoints);
+    }
+
     lastTrailPoint = point;
 
     if (!trailFrame) {
@@ -282,7 +302,7 @@
     trailFrame = 0;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-    const lifetime = cutComplete ? 260 : 420;
+    const lifetime = cutComplete ? 140 : (mobileProfile ? 180 : 260);
 
     while (trail.length && now - trail[0].born > lifetime) {
       trail.shift();
@@ -292,50 +312,67 @@
       ctx.save();
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
-      ctx.globalCompositeOperation = "lighter";
 
-      for (let i = 1; i < trail.length; i += 1) {
-        const a = trail[i - 1];
-        const b = trail[i];
-        const age = now - b.born;
-        const life = Math.max(0, 1 - age / lifetime);
-        const position = i / trail.length;
-        const width = 1.5 + position * 7 * b.pressure;
-
-        const gradient = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-        gradient.addColorStop(0, `rgba(255, 183, 49, ${0.08 * life})`);
-        gradient.addColorStop(0.48, `rgba(255, 224, 132, ${0.56 * life})`);
-        gradient.addColorStop(1, `rgba(255, 250, 218, ${0.92 * life})`);
-
-        ctx.strokeStyle = gradient;
-        ctx.shadowColor = `rgba(255, 188, 56, ${0.72 * life})`;
-        ctx.shadowBlur = 16 * life;
-        ctx.lineWidth = width * life;
+      if (mobileProfile) {
+        ctx.strokeStyle = "rgba(255, 225, 140, .72)";
+        ctx.lineWidth = 3.2;
+        ctx.shadowColor = "rgba(255, 188, 56, .42)";
+        ctx.shadowBlur = 7;
 
         ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
+        ctx.moveTo(trail[0].x, trail[0].y);
 
-        if (i < trail.length - 1) {
+        for (let i = 1; i < trail.length - 1; i += 1) {
+          const point = trail[i];
           const next = trail[i + 1];
-          const midX = (b.x + next.x) * 0.5;
-          const midY = (b.y + next.y) * 0.5;
-          ctx.quadraticCurveTo(b.x, b.y, midX, midY);
-        } else {
-          ctx.lineTo(b.x, b.y);
+          ctx.quadraticCurveTo(
+            point.x,
+            point.y,
+            (point.x + next.x) * 0.5,
+            (point.y + next.y) * 0.5
+          );
         }
 
+        const last = trail[trail.length - 1];
+        ctx.lineTo(last.x, last.y);
         ctx.stroke();
+      } else {
+        ctx.globalCompositeOperation = "lighter";
+
+        for (let i = 1; i < trail.length; i += 1) {
+          const a = trail[i - 1];
+          const b = trail[i];
+          const age = now - b.born;
+          const life = Math.max(0, 1 - age / lifetime);
+          const position = i / trail.length;
+          const width = 1.5 + position * 6 * b.pressure;
+
+          const gradient = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+          gradient.addColorStop(0, `rgba(255, 183, 49, ${0.06 * life})`);
+          gradient.addColorStop(0.5, `rgba(255, 224, 132, ${0.46 * life})`);
+          gradient.addColorStop(1, `rgba(255, 250, 218, ${0.82 * life})`);
+
+          ctx.strokeStyle = gradient;
+          ctx.shadowColor = `rgba(255, 188, 56, ${0.52 * life})`;
+          ctx.shadowBlur = 10 * life;
+          ctx.lineWidth = width * life;
+
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
       }
 
       const head = trail[trail.length - 1];
       const headLife = Math.max(0, 1 - (now - head.born) / lifetime);
 
       if (headLife > 0 && dragging && !cutComplete) {
-        ctx.fillStyle = `rgba(255, 247, 207, ${0.95 * headLife})`;
-        ctx.shadowColor = `rgba(255, 188, 56, ${0.9 * headLife})`;
-        ctx.shadowBlur = 22;
+        ctx.fillStyle = `rgba(255, 247, 207, ${0.88 * headLife})`;
+        ctx.shadowColor = `rgba(255, 188, 56, ${0.58 * headLife})`;
+        ctx.shadowBlur = mobileProfile ? 8 : 14;
         ctx.beginPath();
-        ctx.arc(head.x, head.y, 4.5 + head.pressure * 2, 0, Math.PI * 2);
+        ctx.arc(head.x, head.y, mobileProfile ? 4.2 : 5.2, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -404,6 +441,11 @@
     hasStoredCut = true;
     committedTravel = Math.max(committedTravel, currentProgress * ticketRect.width);
 
+    if (cutRenderFrame) {
+      cancelAnimationFrame(cutRenderFrame);
+      cutRenderFrame = 0;
+    }
+    renderCutPath();
     prepareSplitFromCut();
 
     loader.classList.remove("is-dragging", "is-paused");
