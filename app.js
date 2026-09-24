@@ -2,12 +2,13 @@
   const loader = document.getElementById("goldenLoader");
   const scene = document.getElementById("envelopeScene");
   const shell = document.getElementById("envelopeShell");
+  const flap = document.getElementById("envelopeFlap");
   const ticketMotion = document.getElementById("ticketMotion");
   const ticket = document.getElementById("goldenTicket");
   const zoomLetter = document.getElementById("zoomLetter");
   const body = document.body;
 
-  if (!loader || !scene || !shell || !ticketMotion || !ticket || !zoomLetter) return;
+  if (!loader || !scene || !shell || !flap || !ticketMotion || !ticket || !zoomLetter) return;
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const timers = new Set();
@@ -30,13 +31,19 @@
 
   const prepareEnvelopeMotion = () => {
     const ticketRect = ticket.getBoundingClientRect();
-    const drop = Math.max(window.innerHeight * 0.72, scene.getBoundingClientRect().height * 0.96);
-    const rise = Math.min(ticketRect.height * 0.34, 155);
-    const centerCorrection = window.innerHeight * 0.5 - (ticketRect.top + ticketRect.height * 0.5);
+    const sceneRect = scene.getBoundingClientRect();
+    const drop = Math.max(window.innerHeight * 0.72, sceneRect.height * 1.35);
+    const rise = Math.min(ticketRect.height * 0.30, 150);
 
     scene.style.setProperty("--envelope-drop-y", `${drop.toFixed(2)}px`);
     scene.style.setProperty("--ticket-rise-y", `${(-drop - rise).toFixed(2)}px`);
-    scene.style.setProperty("--ticket-center-y", `${(-drop + centerCorrection).toFixed(2)}px`);
+  };
+
+  const prepareTicketCenter = () => {
+    const rect = ticket.getBoundingClientRect();
+    const correction = window.innerHeight * 0.5 - (rect.top + rect.height * 0.5);
+    const current = parseFloat(getComputedStyle(scene).getPropertyValue("--ticket-rise-y")) || 0;
+    scene.style.setProperty("--ticket-center-y", `${(current + correction).toFixed(2)}px`);
   };
 
   const prepareLetterZoom = () => {
@@ -48,7 +55,7 @@
 
     const scaleX = window.innerWidth / Math.max(1, letterRect.width);
     const scaleY = window.innerHeight / Math.max(1, letterRect.height);
-    const zoomScale = Math.max(scaleX, scaleY) * 3.25;
+    const zoomScale = Math.max(scaleX, scaleY) * 3.35;
 
     const tx = window.innerWidth * 0.5 - ticketRect.left - localX * zoomScale;
     const ty = window.innerHeight * 0.5 - ticketRect.top - localY * zoomScale;
@@ -79,18 +86,24 @@
 
   const onZoomEnd = (event) => {
     if (event.animationName !== "ticketLetterZoom") return;
-
     ticket.removeEventListener("animationend", onZoomEnd);
-    requestAnimationFrame(revealWeb);
+    revealWeb();
   };
 
   const startZoom = () => {
     if (zoomStarted || finished) return;
     zoomStarted = true;
-
     prepareLetterZoom();
     ticket.addEventListener("animationend", onZoomEnd);
     loader.classList.add("is-zooming");
+  };
+
+  const openFlap = () => {
+    loader.classList.add("is-flap-up");
+
+    flap.addEventListener("animationend", () => {
+      loader.classList.add("is-flap-behind");
+    }, { once: true });
   };
 
   const play = () => {
@@ -102,25 +115,25 @@
       return;
     }
 
+    prepareEnvelopeMotion();
+
     requestAnimationFrame(() => {
       loader.classList.add("is-arriving");
     });
 
-    later(() => {
-      loader.classList.add("is-flap-up");
-    }, 760);
-
-    later(prepareEnvelopeMotion, 1450);
+    later(openFlap, 760);
 
     later(() => {
+      prepareEnvelopeMotion();
       loader.classList.add("is-envelope-drop");
-    }, 1540);
+    }, 1640);
 
     later(() => {
+      prepareTicketCenter();
       loader.classList.add("is-ticket-center");
-    }, 2480);
+    }, 2580);
 
-    later(startZoom, 3240);
+    later(startZoom, 3380);
   };
 
   window.addEventListener("resize", () => {
@@ -128,10 +141,7 @@
     prepareEnvelopeMotion();
   }, { passive: true });
 
-  window.GoldenTicketLoader = {
-    play,
-    finish
-  };
+  window.GoldenTicketLoader = { play, finish };
 
   if (document.readyState === "complete") {
     play();
