@@ -113,6 +113,11 @@ body.is-loading { overflow: hidden; }
   will-change: transform, opacity;
 }
 
+.ticket-half .ticket-art {
+  will-change: clip-path, transform;
+  transform: translateZ(0);
+}
+
 .ticket-half::after {
   content: "";
   position: absolute;

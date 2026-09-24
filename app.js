@@ -9,6 +9,8 @@
   const cutLineShadow = document.getElementById("cutLineShadow");
   const topHalf = loader?.querySelector(".ticket-half--top");
   const bottomHalf = loader?.querySelector(".ticket-half--bottom");
+  const topArt = topHalf?.querySelector(".ticket-art");
+  const bottomArt = bottomHalf?.querySelector(".ticket-art");
 
   if (
     !loader ||
@@ -18,7 +20,9 @@
     !cutLinePath ||
     !cutLineShadow ||
     !topHalf ||
-    !bottomHalf
+    !bottomHalf ||
+    !topArt ||
+    !bottomArt
   ) return;
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -49,7 +53,7 @@
 
   const COMPLETE_THRESHOLD = 0.60;
   const EDGE_TOLERANCE = 14;
-  const RESUME_RADIUS = 150;
+  const RESUME_RADIUS = 280;
 
   const later = (fn, delay) => {
     const id = window.setTimeout(() => {
@@ -88,10 +92,10 @@
     cutPoints.length = 0;
     cutLinePath.removeAttribute("d");
     cutLineShadow.removeAttribute("d");
-    topHalf.style.removeProperty("clip-path");
-    topHalf.style.removeProperty("-webkit-clip-path");
-    bottomHalf.style.removeProperty("clip-path");
-    bottomHalf.style.removeProperty("-webkit-clip-path");
+    topArt.style.removeProperty("clip-path");
+    topArt.style.removeProperty("-webkit-clip-path");
+    bottomArt.style.removeProperty("clip-path");
+    bottomArt.style.removeProperty("-webkit-clip-path");
   };
 
   const renderCutPath = () => {
@@ -225,10 +229,10 @@
     const topClip = `polygon(0% 0%, 100% 0%, 100% ${right.y.toFixed(2)}%, ${topEdge}, 0% ${left.y.toFixed(2)}%)`;
     const bottomClip = `polygon(0% ${left.y.toFixed(2)}%, ${bottomEdge}, 100% ${right.y.toFixed(2)}%, 100% 100%, 0% 100%)`;
 
-    topHalf.style.clipPath = topClip;
-    topHalf.style.webkitClipPath = topClip;
-    bottomHalf.style.clipPath = bottomClip;
-    bottomHalf.style.webkitClipPath = bottomClip;
+    topArt.style.clipPath = topClip;
+    topArt.style.webkitClipPath = topClip;
+    bottomArt.style.clipPath = bottomClip;
+    bottomArt.style.webkitClipPath = bottomClip;
 
     const averageY = boundary.reduce((sum, point) => sum + point.y, 0) / boundary.length;
     loader.style.setProperty("--cut-axis-y", `${averageY.toFixed(2)}%`);
@@ -452,11 +456,14 @@
 
   const beginCut = (event) => {
     if (!ready || finished || cutComplete || dragging) return;
+    if (event.pointerType === "mouse" && event.button !== 0) return;
 
     ticketRect = ticket.getBoundingClientRect();
     cutCenterY = ticketRect.top + ticketRect.height * 0.5;
-    cutBand = Math.max(96, Math.min(180, ticketRect.height * 0.26));
+    cutBand = Math.max(110, Math.min(220, ticketRect.height * 0.30));
 
+    const hitPad = 56;
+    const hitBand = Math.max(cutBand * 1.45, ticketRect.height * 0.38);
     const lastPoint = cutPoints[cutPoints.length - 1];
 
     if (hasStoredCut && lastPoint) {
@@ -468,9 +475,9 @@
         return;
       }
     } else if (
-      event.clientX < ticketRect.left - 24 ||
-      event.clientX > ticketRect.right + 24 ||
-      Math.abs(event.clientY - cutCenterY) > cutBand
+      event.clientX < ticketRect.left - hitPad ||
+      event.clientX > ticketRect.right + hitPad ||
+      Math.abs(event.clientY - cutCenterY) > hitBand
     ) {
       nudgeInstruction();
       return;
@@ -602,20 +609,18 @@
     if (finished) return;
 
     resizeTrail();
+    prepareInteraction();
 
-    if (reducedMotion) {
-      prepareInteraction();
-      return;
+    if (!reducedMotion) {
+      loader.classList.add("is-entering");
+      later(() => loader.classList.remove("is-entering"), 900);
     }
-
-    loader.classList.add("is-entering");
-    later(prepareInteraction, 900);
   };
 
-  loader.addEventListener("pointerdown", beginCut, { passive: false });
-  loader.addEventListener("pointermove", moveCut, { passive: false });
-  loader.addEventListener("pointerup", endCut, { passive: false });
-  loader.addEventListener("pointercancel", endCut, { passive: false });
+  loader.addEventListener("pointerdown", beginCut, { passive: false, capture: true });
+  loader.addEventListener("pointermove", moveCut, { passive: false, capture: true });
+  loader.addEventListener("pointerup", endCut, { passive: false, capture: true });
+  loader.addEventListener("pointercancel", endCut, { passive: false, capture: true });
   window.addEventListener("resize", resizeTrail, { passive: true });
 
   window.GoldenTicketLoader = {
