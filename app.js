@@ -56,15 +56,19 @@
     }, 720);
 
     later(() => {
+      loader.classList.add("is-flap-behind");
+    }, 1360);
+
+    later(() => {
       loader.classList.add("is-extracting-ticket");
-    }, 1220);
+    }, 1460);
 
     later(() => {
       body.classList.add("is-revealed");
       loader.classList.add("is-revealing-site");
-    }, 2420);
+    }, 2720);
 
-    later(finish, 3380);
+    later(finish, 3680);
   };
 
   window.GoldenTicketLoader = {
