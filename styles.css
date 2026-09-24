@@ -22,6 +22,7 @@ body.is-loading { overflow: hidden; }
   --gesture-progress: 0;
   --cut-head-x: 0%;
   --cut-head-y: 50%;
+  --cut-axis-y: 50%;
   --cut-origin: left;
   position: fixed;
   inset: 0;
@@ -105,7 +106,7 @@ body.is-loading { overflow: hidden; }
   position: absolute;
   left: 0;
   width: 100%;
-  height: 50%;
+  height: 100%;
   overflow: hidden;
   transform-style: preserve-3d;
   backface-visibility: hidden;
@@ -137,7 +138,7 @@ body.is-loading { overflow: hidden; }
 
 .ticket-half--top {
   top: 0;
-  transform-origin: center bottom;
+  transform-origin: center var(--cut-axis-y);
   border-radius: 0;
 }
 
@@ -145,7 +146,7 @@ body.is-loading { overflow: hidden; }
 
 .ticket-half--bottom {
   bottom: 0;
-  transform-origin: center top;
+  transform-origin: center var(--cut-axis-y);
   border-radius: 0;
 }
 
@@ -648,7 +649,7 @@ body.is-loading { overflow: hidden; }
       90deg,
       rgba(255,255,255,.08),
       rgba(255,255,255,.22) 16%,
-      rgba(255,220,125,.44) 66%,
+      rgba(255,220,125,.44) 60%,
       rgba(255,255,255,.10)
     );
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.035);
@@ -673,7 +674,7 @@ body.is-loading { overflow: hidden; }
 
 .cut-instruction__target {
   position: absolute;
-  left: 66%;
+  left: 60%;
   top: 50%;
   width: .46rem;
   height: .46rem;
@@ -757,6 +758,32 @@ body.is-loading { overflow: hidden; }
 
 .golden-loader.is-dragging .ticket-stage {
   animation: ticketCutTension .34s ease-in-out infinite alternate;
+}
+
+.golden-loader.is-paused .cut-line {
+  opacity: 1;
+}
+
+.golden-loader.is-paused .cut-head {
+  opacity: .48;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(.78) rotate(-4deg);
+}
+
+.golden-loader.is-paused .cut-instruction__progress {
+  opacity: 1;
+}
+
+.golden-loader.is-paused .cut-instruction__pointer {
+  left: calc(var(--gesture-progress) * 100%);
+  animation: none;
+  opacity: .72;
+  transform: translate(-50%, -50%) scale(.82);
+}
+
+.golden-loader.is-paused .cut-instruction__desktop,
+.golden-loader.is-paused .cut-instruction__touch {
+  opacity: .72;
 }
 
 .golden-loader.is-dragging .cut-line {
@@ -1125,7 +1152,7 @@ body.is-revealed .site-shell {
     transform: translate(-50%, -50%) scale(1);
   }
   72% {
-    left: 66%;
+    left: 60%;
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }

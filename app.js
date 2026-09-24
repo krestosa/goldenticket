@@ -7,8 +7,19 @@
   const cutLine = document.getElementById("cutLine");
   const cutLinePath = document.getElementById("cutLinePath");
   const cutLineShadow = document.getElementById("cutLineShadow");
+  const topHalf = loader?.querySelector(".ticket-half--top");
+  const bottomHalf = loader?.querySelector(".ticket-half--bottom");
 
-  if (!loader || !ticket || !trailCanvas || !cutLine || !cutLinePath || !cutLineShadow) return;
+  if (
+    !loader ||
+    !ticket ||
+    !trailCanvas ||
+    !cutLine ||
+    !cutLinePath ||
+    !cutLineShadow ||
+    !topHalf ||
+    !bottomHalf
+  ) return;
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
@@ -23,20 +34,29 @@
   let dragging = false;
   let cutComplete = false;
   let activePointerId = null;
-  let startX = 0;
-  let direction = 1;
   let ticketRect = null;
   let cutCenterY = 0;
   let cutBand = 0;
   let trailFrame = 0;
   let lastTrailPoint = null;
+
+  let direction = 1;
+  let startX = 0;
   let currentProgress = 0;
+  let committedTravel = 0;
+  let dragStartTravel = 0;
+  let hasStoredCut = false;
+
+  const COMPLETE_THRESHOLD = 0.60;
+  const EDGE_TOLERANCE = 14;
+  const RESUME_RADIUS = 150;
 
   const later = (fn, delay) => {
     const id = window.setTimeout(() => {
       timers.delete(id);
       fn();
     }, delay);
+
     timers.add(id);
     return id;
   };
@@ -49,6 +69,7 @@
   const setCutProgress = (progress, pointerX, pointerY) => {
     const clamped = Math.max(0, Math.min(1, progress));
     currentProgress = clamped;
+
     loader.style.setProperty("--cut-progress", clamped.toFixed(4));
     loader.style.setProperty("--gesture-progress", clamped.toFixed(4));
 
@@ -67,6 +88,10 @@
     cutPoints.length = 0;
     cutLinePath.removeAttribute("d");
     cutLineShadow.removeAttribute("d");
+    topHalf.style.removeProperty("clip-path");
+    topHalf.style.removeProperty("-webkit-clip-path");
+    bottomHalf.style.removeProperty("clip-path");
+    bottomHalf.style.removeProperty("-webkit-clip-path");
   };
 
   const renderCutPath = () => {
@@ -120,6 +145,93 @@
 
     cutPoints.push(point);
     renderCutPath();
+  };
+
+  const getMonotonicBoundary = () => {
+    if (!ticketRect || cutPoints.length < 2) return null;
+
+    const sorted = cutPoints
+      .map((point) => ({
+        x: ((point.x - ticketRect.left) / ticketRect.width) * 100,
+        y: ((point.y - ticketRect.top) / ticketRect.height) * 100
+      }))
+      .sort((a, b) => a.x - b.x);
+
+    const compact = [];
+
+    for (const point of sorted) {
+      const x = Math.max(0, Math.min(100, point.x));
+      const y = Math.max(20, Math.min(80, point.y));
+      const previous = compact[compact.length - 1];
+
+      if (!previous || x - previous.x >= 1.35) {
+        compact.push({ x, y });
+      } else {
+        previous.y = (previous.y + y) * 0.5;
+        previous.x = Math.max(previous.x, x);
+      }
+    }
+
+    if (compact.length < 2) return null;
+
+    const first = compact[0];
+    const second = compact[1];
+    const last = compact[compact.length - 1];
+    const beforeLast = compact[compact.length - 2];
+
+    const leftSlope = (second.y - first.y) / Math.max(1, second.x - first.x);
+    const rightSlope = (last.y - beforeLast.y) / Math.max(1, last.x - beforeLast.x);
+
+    if (first.x > 0) {
+      compact.unshift({
+        x: 0,
+        y: Math.max(20, Math.min(80, first.y - leftSlope * first.x))
+      });
+    } else {
+      first.x = 0;
+    }
+
+    const updatedLast = compact[compact.length - 1];
+
+    if (updatedLast.x < 100) {
+      compact.push({
+        x: 100,
+        y: Math.max(20, Math.min(80, updatedLast.y + rightSlope * (100 - updatedLast.x)))
+      });
+    } else {
+      updatedLast.x = 100;
+    }
+
+    return compact;
+  };
+
+  const prepareSplitFromCut = () => {
+    const boundary = getMonotonicBoundary();
+    if (!boundary) return;
+
+    const topEdge = boundary
+      .slice()
+      .reverse()
+      .map((point) => `${point.x.toFixed(2)}% ${point.y.toFixed(2)}%`)
+      .join(", ");
+
+    const bottomEdge = boundary
+      .map((point) => `${point.x.toFixed(2)}% ${point.y.toFixed(2)}%`)
+      .join(", ");
+
+    const left = boundary[0];
+    const right = boundary[boundary.length - 1];
+
+    const topClip = `polygon(0% 0%, 100% 0%, 100% ${right.y.toFixed(2)}%, ${topEdge}, 0% ${left.y.toFixed(2)}%)`;
+    const bottomClip = `polygon(0% ${left.y.toFixed(2)}%, ${bottomEdge}, 100% ${right.y.toFixed(2)}%, 100% 100%, 0% 100%)`;
+
+    topHalf.style.clipPath = topClip;
+    topHalf.style.webkitClipPath = topClip;
+    bottomHalf.style.clipPath = bottomClip;
+    bottomHalf.style.webkitClipPath = bottomClip;
+
+    const averageY = boundary.reduce((sum, point) => sum + point.y, 0) / boundary.length;
+    loader.style.setProperty("--cut-axis-y", `${averageY.toFixed(2)}%`);
   };
 
   const resizeTrail = () => {
@@ -213,6 +325,7 @@
 
       const head = trail[trail.length - 1];
       const headLife = Math.max(0, 1 - (now - head.born) / lifetime);
+
       if (headLife > 0 && dragging && !cutComplete) {
         ctx.fillStyle = `rgba(255, 247, 207, ${0.95 * headLife})`;
         ctx.shadowColor = `rgba(255, 188, 56, ${0.9 * headLife})`;
@@ -235,10 +348,12 @@
   const clearTrail = () => {
     trail.length = 0;
     lastTrailPoint = null;
+
     if (trailFrame) {
       cancelAnimationFrame(trailFrame);
       trailFrame = 0;
     }
+
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
   };
 
@@ -262,24 +377,17 @@
 
     dragging = false;
     activePointerId = null;
-    loader.classList.remove("is-dragging", "is-cutting");
+    loader.classList.remove("is-dragging", "is-cutting", "is-paused");
     loader.classList.add("is-opening");
     body.classList.add("is-revealed");
 
-    const movingHalf = loader.querySelector(".ticket-half--bottom");
-
-    if (!movingHalf) {
-      later(finish, 1080);
-      return;
-    }
-
     const onOpened = (event) => {
       if (event.animationName !== "openBottom") return;
-      movingHalf.removeEventListener("animationend", onOpened);
+      bottomHalf.removeEventListener("animationend", onOpened);
       finish();
     };
 
-    movingHalf.addEventListener("animationend", onOpened);
+    bottomHalf.addEventListener("animationend", onOpened);
     later(finish, 1300);
   };
 
@@ -289,10 +397,16 @@
     cutComplete = true;
     dragging = false;
     ready = false;
+    hasStoredCut = true;
+    committedTravel = Math.max(committedTravel, currentProgress * ticketRect.width);
 
-    loader.classList.remove("is-dragging");
+    prepareSplitFromCut();
+
+    loader.classList.remove("is-dragging", "is-paused");
     loader.classList.add("is-cut-complete");
+
     const lastPoint = cutPoints[cutPoints.length - 1];
+
     if (lastPoint) {
       setCutProgress(currentProgress, lastPoint.x, lastPoint.y);
     }
@@ -304,22 +418,36 @@
     later(openTicket, reducedMotion ? 40 : 260);
   };
 
-  const resetCut = () => {
+  const pauseCut = () => {
     dragging = false;
     activePointerId = null;
+    committedTravel = Math.max(committedTravel, currentProgress * ticketRect.width);
+    hasStoredCut = committedTravel > 0;
+
     loader.classList.remove("is-dragging", "is-cutting");
-    loader.classList.add("is-resetting");
+    loader.classList.add("is-paused");
 
-    setCutProgress(0, direction > 0 ? ticketRect.left : ticketRect.right, cutCenterY);
+    const lastPoint = cutPoints[cutPoints.length - 1];
 
-    later(clearCutPath, 170);
-
-    if (instruction) {
-      instruction.classList.add("is-nudge");
-      later(() => instruction.classList.remove("is-nudge"), 520);
+    if (lastPoint) {
+      setCutProgress(
+        Math.min(1, committedTravel / ticketRect.width),
+        lastPoint.x,
+        lastPoint.y
+      );
     }
 
-    later(() => loader.classList.remove("is-resetting"), 260);
+    if (instruction) {
+      instruction.classList.remove("is-active");
+    }
+  };
+
+  const nudgeInstruction = () => {
+    if (!instruction) return;
+
+    instruction.classList.remove("is-nudge");
+    void instruction.offsetWidth;
+    instruction.classList.add("is-nudge");
   };
 
   const beginCut = (event) => {
@@ -329,31 +457,48 @@
     cutCenterY = ticketRect.top + ticketRect.height * 0.5;
     cutBand = Math.max(96, Math.min(180, ticketRect.height * 0.26));
 
-    if (
+    const lastPoint = cutPoints[cutPoints.length - 1];
+
+    if (hasStoredCut && lastPoint) {
+      const dx = event.clientX - lastPoint.x;
+      const dy = event.clientY - lastPoint.y;
+
+      if ((dx * dx) + (dy * dy) > RESUME_RADIUS * RESUME_RADIUS) {
+        nudgeInstruction();
+        return;
+      }
+    } else if (
       event.clientX < ticketRect.left - 24 ||
       event.clientX > ticketRect.right + 24 ||
       Math.abs(event.clientY - cutCenterY) > cutBand
     ) {
-      if (instruction) {
-        instruction.classList.remove("is-nudge");
-        void instruction.offsetWidth;
-        instruction.classList.add("is-nudge");
-      }
+      nudgeInstruction();
       return;
     }
 
     dragging = true;
     activePointerId = event.pointerId;
-    startX = event.clientX;
-    direction = event.clientX <= ticketRect.left + ticketRect.width * 0.5 ? 1 : -1;
+    dragStartTravel = committedTravel;
+
+    if (!hasStoredCut || cutPoints.length === 0) {
+      startX = event.clientX;
+      direction = event.clientX <= ticketRect.left + ticketRect.width * 0.5 ? 1 : -1;
+      committedTravel = 0;
+      dragStartTravel = 0;
+      currentProgress = 0;
+      clearCutPath();
+      addCutPoint(event.clientX, event.clientY);
+    } else {
+      startX = lastPoint.x;
+    }
 
     loader.style.setProperty("--cut-origin", direction > 0 ? "left" : "right");
+    loader.classList.remove("is-paused");
     loader.classList.add("is-dragging", "is-cutting");
-    loader.classList.remove("is-resetting");
 
-    if (instruction) instruction.classList.add("is-active");
-
-    clearCutPath();
+    if (instruction) {
+      instruction.classList.add("is-active");
+    }
 
     try {
       loader.setPointerCapture(event.pointerId);
@@ -361,8 +506,12 @@
       // Pointer capture is optional.
     }
 
-    setCutProgress(0, event.clientX, event.clientY);
-    addCutPoint(event.clientX, event.clientY);
+    setCutProgress(
+      Math.min(1, committedTravel / ticketRect.width),
+      event.clientX,
+      event.clientY
+    );
+
     pushTrailPoint(event.clientX, event.clientY, event.pressure);
     event.preventDefault();
   };
@@ -370,21 +519,29 @@
   const moveCut = (event) => {
     if (!dragging || event.pointerId !== activePointerId || !ticketRect) return;
 
-    const dx = (event.clientX - startX) * direction;
-    const availableDistance = direction > 0
-      ? ticketRect.right - startX
-      : startX - ticketRect.left;
-    const requiredDistance = Math.max(ticketRect.width * 0.30, availableDistance * 0.68);
-    const horizontalProgress = Math.max(0, Math.min(1, dx / requiredDistance));
+    const directionalDelta = Math.max(0, (event.clientX - startX) * direction);
+    const totalTravel = Math.max(
+      committedTravel,
+      Math.min(ticketRect.width, dragStartTravel + directionalDelta)
+    );
+    const progress = Math.min(1, totalTravel / ticketRect.width);
     const yDistance = Math.abs(event.clientY - cutCenterY);
-    const alignment = Math.max(0, 1 - yDistance / (cutBand * 1.9));
-    const progress = horizontalProgress * (0.88 + alignment * 0.12);
 
     setCutProgress(progress, event.clientX, event.clientY);
     addCutPoint(event.clientX, event.clientY);
     pushTrailPoint(event.clientX, event.clientY, event.pressure);
 
-    if (progress >= 0.72 && yDistance <= cutBand * 1.65) {
+    committedTravel = Math.max(committedTravel, totalTravel);
+    hasStoredCut = committedTravel > 0;
+
+    const edgeReached = direction > 0
+      ? event.clientX >= ticketRect.right - EDGE_TOLERANCE
+      : event.clientX <= ticketRect.left + EDGE_TOLERANCE;
+
+    if (
+      (progress >= COMPLETE_THRESHOLD || edgeReached) &&
+      yDistance <= cutBand * 1.65
+    ) {
       completeCut();
     }
 
@@ -402,13 +559,19 @@
 
     if (cutComplete) return;
 
-    if (instruction) instruction.classList.remove("is-active");
+    if (instruction) {
+      instruction.classList.remove("is-active");
+    }
 
-    if (currentProgress >= 0.58) {
+    committedTravel = Math.max(committedTravel, currentProgress * ticketRect.width);
+    hasStoredCut = committedTravel > 0;
+
+    if (currentProgress >= COMPLETE_THRESHOLD) {
       completeCut();
     } else {
-      resetCut();
+      pauseCut();
     }
+
     event.preventDefault();
   };
 
@@ -418,10 +581,16 @@
     loader.classList.remove("is-entering");
     loader.classList.add("is-ready");
     loader.style.setProperty("--gesture-progress", "0");
+
     ready = true;
+    currentProgress = 0;
+    committedTravel = 0;
+    dragStartTravel = 0;
+    hasStoredCut = false;
 
     ticketRect = ticket.getBoundingClientRect();
     cutCenterY = ticketRect.top + ticketRect.height * 0.5;
+
     setCutProgress(0, ticketRect.left, cutCenterY);
 
     if (instruction) {
@@ -435,8 +604,7 @@
     resizeTrail();
 
     if (reducedMotion) {
-      loader.classList.add("is-ready");
-      ready = true;
+      prepareInteraction();
       return;
     }
 
