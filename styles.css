@@ -39,7 +39,7 @@ body.is-loading { overflow: hidden; }
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: .085;
+  opacity: .08;
   mix-blend-mode: soft-light;
   background-image:
     radial-gradient(circle at 25% 20%, rgba(255,255,255,.5) 0 .5px, transparent .8px),
@@ -47,12 +47,24 @@ body.is-loading { overflow: hidden; }
   background-size: 8px 8px, 11px 11px;
 }
 
+.zoom-blackout {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .envelope-scene {
+  --envelope-drop-y: 72vh;
+  --ticket-rise-y: -72vh;
+  --ticket-center-y: -72vh;
+
   position: relative;
   width: min(86vw, 780px);
   aspect-ratio: 1.65 / 1;
   perspective: 1500px;
-  transform-style: preserve-3d;
   opacity: 0;
   transform: translateY(34px) scale(.97);
   will-change: transform, opacity;
@@ -73,9 +85,17 @@ body.is-loading { overflow: hidden; }
   will-change: transform, opacity;
 }
 
+.envelope-shell {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
 .envelope-back,
 .envelope-front,
-.envelope-flap {
+.envelope-flap,
+.ticket-motion {
   position: absolute;
   inset: 0;
 }
@@ -91,7 +111,11 @@ body.is-loading { overflow: hidden; }
     inset 0 1px 0 rgba(255,255,255,.055),
     inset 0 -20px 42px rgba(0,0,0,.26),
     0 34px 62px rgba(0,0,0,.40);
-  will-change: transform, opacity;
+}
+
+.ticket-motion {
+  z-index: 2;
+  will-change: transform;
 }
 
 .envelope-ticket {
@@ -100,7 +124,6 @@ body.is-loading { overflow: hidden; }
   --zoom-scale: 24;
 
   position: absolute;
-  z-index: 2;
   left: 7%;
   top: 8%;
   width: 86%;
@@ -109,7 +132,7 @@ body.is-loading { overflow: hidden; }
   border-radius: var(--ticket-edge-corner);
   color: #241807;
   transform: translateY(17%) scale(.94);
-  transform-origin: center center;
+  transform-origin: 0 0;
   will-change: transform, opacity;
   --ticket-edge: var(--ticket-edge-step);
   --ticket-notch: var(--ticket-edge-notch);
@@ -318,7 +341,6 @@ body.is-loading { overflow: hidden; }
     inset 0 1px 0 rgba(255,255,255,.045),
     inset 0 -22px 36px rgba(0,0,0,.25);
   clip-path: polygon(0 39%, 50% 76%, 100% 39%, 100% 100%, 0 100%);
-  will-change: transform, opacity;
 }
 
 .envelope-fold {
@@ -342,7 +364,7 @@ body.is-loading { overflow: hidden; }
   transform-origin: 50% 0;
   transform: rotateX(0deg);
   transform-style: preserve-3d;
-  will-change: transform, opacity;
+  will-change: transform;
   pointer-events: none;
 }
 
@@ -411,42 +433,32 @@ body.is-loading { overflow: hidden; }
   animation: flapLift .72s cubic-bezier(.22,.74,.18,1) both;
 }
 
-.golden-loader.is-envelope-drop .envelope-back,
-.golden-loader.is-envelope-drop .envelope-front,
-.golden-loader.is-envelope-drop .envelope-flap {
-  transform: translateY(64vh);
-  opacity: .98;
-  transition:
-    transform .82s cubic-bezier(.22,.78,.16,1),
-    opacity .45s .34s ease;
+.golden-loader.is-envelope-drop .envelope-shell {
+  transform: translateY(var(--envelope-drop-y));
+  transition: transform .84s cubic-bezier(.22,.78,.16,1);
 }
 
-.golden-loader.is-envelope-drop .envelope-flap {
-  z-index: 0;
+.golden-loader.is-envelope-drop .ticket-motion {
+  transform: translateY(var(--ticket-rise-y));
+  transition: transform .84s cubic-bezier(.18,.82,.16,1);
 }
 
 .golden-loader.is-envelope-drop .envelope-shadow {
-  transform: translateX(-50%) translateY(58vh) scale(.72);
+  transform: translateX(-50%) translateY(var(--envelope-drop-y)) scale(.72);
   opacity: 0;
   transition:
-    transform .95s cubic-bezier(.22,.78,.16,1),
-    opacity .48s ease;
+    transform .84s cubic-bezier(.22,.78,.16,1),
+    opacity .42s ease;
 }
 
-.golden-loader.is-envelope-drop .envelope-ticket {
-  transform: translateY(-42%) scale(1.012);
-  transition: transform .82s cubic-bezier(.18,.82,.16,1);
-}
-
-.golden-loader.is-ticket-center .envelope-ticket {
-  transform: translateY(0) scale(1);
+.golden-loader.is-ticket-center .ticket-motion {
+  transform: translateY(var(--ticket-center-y));
   transition: transform .62s cubic-bezier(.2,.76,.18,1);
 }
 
 .golden-loader.is-zooming .envelope-ticket {
-  z-index: 10;
-  transform-origin: 0 0;
-  animation: ticketLetterZoom 1.34s cubic-bezier(.22,.72,.10,1) both;
+  z-index: 20;
+  animation: ticketLetterZoom 1.38s cubic-bezier(.22,.72,.10,1) both;
 }
 
 .golden-loader.is-zooming .loader-grain {
@@ -454,8 +466,8 @@ body.is-loading { overflow: hidden; }
   transition: opacity .45s ease;
 }
 
-.golden-loader.is-web-reveal {
-  animation: loaderFinalReveal .38s ease-out both;
+.golden-loader.is-zooming .zoom-blackout {
+  animation: zoomBlackout 1.38s linear both;
 }
 
 @keyframes envelopeEnter {
@@ -487,32 +499,26 @@ body.is-loading { overflow: hidden; }
 
 @keyframes ticketLetterZoom {
   0% {
-    transform: matrix(1, 0, 0, 1, 0, 0);
-    opacity: 1;
-  }
-  78% {
+    transform: translateY(17%) scale(.94);
     opacity: 1;
   }
   100% {
     transform:
-      matrix(
-        var(--zoom-scale),
-        0,
-        0,
-        var(--zoom-scale),
-        var(--zoom-tx),
-        var(--zoom-ty)
-      );
+      translate(var(--zoom-tx), var(--zoom-ty))
+      scale(var(--zoom-scale));
     opacity: 1;
   }
 }
 
-@keyframes loaderFinalReveal {
-  from {
-    opacity: 1;
-  }
-  to {
+@keyframes zoomBlackout {
+  0%, 78% {
     opacity: 0;
+  }
+  93% {
+    opacity: .22;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
@@ -574,30 +580,16 @@ body.is-loading { overflow: hidden; }
     letter-spacing: .22em;
   }
 
-  .golden-loader.is-envelope-drop .envelope-back,
-  .golden-loader.is-envelope-drop .envelope-front,
-  .golden-loader.is-envelope-drop .envelope-flap {
-    transform: translateY(68vh);
-  }
-
-  .golden-loader.is-envelope-drop .envelope-ticket {
-    transform: translateY(-42%) scale(1.01);
-  }
-
-  .golden-loader.is-ticket-center .envelope-ticket {
-    transform: translateY(0) scale(1);
-  }
-
   .loader-grain {
-    opacity: .05;
+    opacity: .045;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .golden-loader,
   .envelope-scene,
-  .envelope-back,
-  .envelope-front,
+  .envelope-shell,
+  .ticket-motion,
   .envelope-flap,
   .envelope-ticket,
   .envelope-shadow {
@@ -616,6 +608,13 @@ body.is-loading { overflow: hidden; }
 body.is-revealed .site-shell {
   animation: siteReveal 1.1s var(--ease-out) forwards;
 }
+
+body.is-revealed.is-instant-reveal .site-shell {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
 
 .hero {
   position: relative;

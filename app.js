@@ -1,15 +1,18 @@
 (() => {
   const loader = document.getElementById("goldenLoader");
   const scene = document.getElementById("envelopeScene");
+  const shell = document.getElementById("envelopeShell");
+  const ticketMotion = document.getElementById("ticketMotion");
   const ticket = document.getElementById("goldenTicket");
   const zoomLetter = document.getElementById("zoomLetter");
   const body = document.body;
 
-  if (!loader || !scene || !ticket || !zoomLetter) return;
+  if (!loader || !scene || !shell || !ticketMotion || !ticket || !zoomLetter) return;
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const timers = new Set();
   let finished = false;
+  let zoomStarted = false;
 
   const later = (fn, delay) => {
     const id = window.setTimeout(() => {
@@ -25,24 +28,28 @@
     timers.clear();
   };
 
+  const prepareEnvelopeMotion = () => {
+    const ticketRect = ticket.getBoundingClientRect();
+    const drop = Math.max(window.innerHeight * 0.72, scene.getBoundingClientRect().height * 0.96);
+    const rise = Math.min(ticketRect.height * 0.34, window.innerWidth <= 700 ? 105 : 155);
+    const centerCorrection = window.innerHeight * 0.5 - (ticketRect.top + ticketRect.height * 0.5);
+
+    scene.style.setProperty("--envelope-drop-y", `${drop.toFixed(2)}px`);
+    scene.style.setProperty("--ticket-rise-y", `${(-drop - rise).toFixed(2)}px`);
+    scene.style.setProperty("--ticket-center-y", `${(-drop + centerCorrection).toFixed(2)}px`);
+  };
+
   const prepareLetterZoom = () => {
-    // Measure only after the ticket has finished returning to center.
-    // The end transform uses origin 0/0 and an explicit matrix, so the
-    // selected glyph lands exactly at the viewport center at every size.
     const ticketRect = ticket.getBoundingClientRect();
     const letterRect = zoomLetter.getBoundingClientRect();
 
     const localX = letterRect.left + letterRect.width * 0.5 - ticketRect.left;
     const localY = letterRect.top + letterRect.height * 0.5 - ticketRect.top;
 
-    const scaleToCover = Math.max(
-      window.innerWidth / Math.max(1, letterRect.width),
-      window.innerHeight / Math.max(1, letterRect.height)
-    );
+    const scaleX = window.innerWidth / Math.max(1, letterRect.width);
+    const scaleY = window.innerHeight / Math.max(1, letterRect.height);
+    const zoomScale = Math.max(scaleX, scaleY) * 2.8;
 
-    // Overshoot enough that the solid I fully covers the viewport before
-    // the site is allowed to appear.
-    const zoomScale = Math.max(22, Math.min(64, scaleToCover * 1.32));
     const tx = window.innerWidth * 0.5 - ticketRect.left - localX * zoomScale;
     const ty = window.innerHeight * 0.5 - ticketRect.top - localY * zoomScale;
 
@@ -57,7 +64,6 @@
     clearTimers();
 
     body.classList.remove("is-loading");
-    body.classList.add("is-revealed");
     loader.classList.add("is-gone");
 
     requestAnimationFrame(() => {
@@ -65,18 +71,25 @@
     });
   };
 
-  const revealSiteAtZoomLimit = (event) => {
-    if (event.animationName !== "ticketLetterZoom" || finished) return;
+  const revealWeb = () => {
+    if (finished) return;
+    body.classList.add("is-revealed", "is-instant-reveal");
+    finish();
+  };
 
-    ticket.removeEventListener("animationend", revealSiteAtZoomLimit);
-    body.classList.add("is-revealed");
-    loader.classList.add("is-web-reveal");
-    later(finish, 420);
+  const onZoomEnd = (event) => {
+    if (event.animationName !== "ticketLetterZoom") return;
+
+    ticket.removeEventListener("animationend", onZoomEnd);
+    requestAnimationFrame(revealWeb);
   };
 
   const startZoom = () => {
+    if (zoomStarted || finished) return;
+    zoomStarted = true;
+
     prepareLetterZoom();
-    ticket.addEventListener("animationend", revealSiteAtZoomLimit);
+    ticket.addEventListener("animationend", onZoomEnd);
     loader.classList.add("is-zooming");
   };
 
@@ -84,7 +97,7 @@
     if (finished) return;
 
     if (reducedMotion) {
-      body.classList.add("is-revealed");
+      body.classList.add("is-revealed", "is-instant-reveal");
       finish();
       return;
     }
@@ -93,29 +106,26 @@
       loader.classList.add("is-arriving");
     });
 
-    // 1. Lift only the flap.
     later(() => {
       loader.classList.add("is-flap-up");
-    }, 780);
+    }, 760);
 
-    // 2. Envelope moves down while the ticket rises slightly.
+    later(prepareEnvelopeMotion, 1450);
+
     later(() => {
       loader.classList.add("is-envelope-drop");
-    }, 1580);
+    }, 1540);
 
-    // 3. Ticket returns to the exact visual center.
     later(() => {
       loader.classList.add("is-ticket-center");
-    }, 2500);
+    }, 2480);
 
-    // 4. Start the glyph zoom only after the centering transition is complete.
-    later(startZoom, 3220);
+    later(startZoom, 3240);
   };
 
   window.addEventListener("resize", () => {
-    if (!loader.classList.contains("is-zooming")) {
-      prepareLetterZoom();
-    }
+    if (finished || zoomStarted) return;
+    prepareEnvelopeMotion();
   }, { passive: true });
 
   window.GoldenTicketLoader = {
