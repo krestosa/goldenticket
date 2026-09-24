@@ -95,7 +95,16 @@
   --tracking-wide: .14em;
   --tracking-label: .24em;
   --tracking-eyebrow: .32em;
-  --tracking-ticket: .36em;
+  --tracking-ticket: -.008em;
+  --tracking-ticket-kicker: .28em;
+  --tracking-ticket-copy: .22em;
+  --tracking-ticket-code: .16em;
+
+  --text-ticket-kicker: clamp(.75rem, .92vw, 1rem);
+  --text-ticket-title: clamp(5rem, 10.6vw, 11.25rem);
+  --text-ticket-copy: clamp(.6875rem, .82vw, .875rem);
+  --text-ticket-code: clamp(.625rem, .72vw, .75rem);
+  --leading-ticket-title: .76;
 
   /* 4px spacing system */
   --space-0: 0;

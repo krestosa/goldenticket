@@ -352,9 +352,10 @@ body.is-loading { overflow: hidden; }
 
 .ticket-kicker {
   top: 12%;
-  font-size: clamp(10px, .9vw, 15px);
-  letter-spacing: .36em;
-  font-weight: 700;
+  font-size: var(--text-ticket-kicker);
+  line-height: 1;
+  letter-spacing: var(--tracking-ticket-kicker);
+  font-weight: var(--font-weight-bold);
   color: rgba(42,27,6,.74);
   text-shadow:
     0 1px 0 rgba(255,255,255,.30),
@@ -363,10 +364,12 @@ body.is-loading { overflow: hidden; }
 
 .ticket-title {
   top: 25%;
-  font-size: clamp(74px, 10.3vw, 178px);
-  line-height: .72;
-  letter-spacing: -.05em;
+  font-size: var(--text-ticket-title);
+  line-height: var(--leading-ticket-title);
+  letter-spacing: var(--tracking-ticket);
   font-weight: var(--font-weight-black);
+  font-kerning: normal;
+  font-feature-settings: "kern" 1;
   color: #241706;
   -webkit-text-stroke: .65px rgba(74,44,5,.24);
   filter: drop-shadow(0 8px 12px rgba(74,43,5,.08));
@@ -381,9 +384,11 @@ body.is-loading { overflow: hidden; }
 
 .ticket-copy {
   bottom: 15%;
-  font-size: clamp(9px, .82vw, 13px);
-  letter-spacing: .25em;
-  font-weight: 700;
+  font-size: var(--text-ticket-copy);
+  line-height: 1;
+  letter-spacing: var(--tracking-ticket-copy);
+  font-weight: var(--font-weight-bold);
+  font-kerning: normal;
   color: rgba(42,27,6,.70);
   text-shadow: 0 1px 0 rgba(255,255,255,.22);
 }
@@ -393,8 +398,11 @@ body.is-loading { overflow: hidden; }
   bottom: 6.5%;
   left: auto;
   transform: translateZ(34px);
-  font-size: clamp(8px, .72vw, 11px);
-  letter-spacing: .18em;
+  font-size: var(--text-ticket-code);
+  line-height: 1;
+  letter-spacing: var(--tracking-ticket-code);
+  font-weight: var(--font-weight-bold);
+  font-kerning: normal;
   color: rgba(42,27,6,.68);
   text-shadow: 0 1px 0 rgba(255,255,255,.20);
 }
@@ -938,12 +946,14 @@ body.is-revealed .site-shell {
 
   .ticket-title {
     top: 29%;
-    font-size: clamp(64px, 20vw, 112px);
+    font-size: clamp(4rem, 19.5vw, 7.75rem);
+    line-height: .80;
+    letter-spacing: -.005em;
   }
 
   .ticket-kicker {
     top: 13%;
-    font-size: 9px;
+    font-size: .6875rem;
     letter-spacing: .24em;
   }
 
@@ -952,8 +962,14 @@ body.is-revealed .site-shell {
     display: block;
     width: 72vw;
     white-space: normal;
-    line-height: var(--leading-body);
-    font-size: 9px;
+    line-height: 1.25;
+    font-size: .625rem;
+    letter-spacing: .18em;
+  }
+
+  .ticket-code {
+    font-size: .5625rem;
+    letter-spacing: .14em;
   }
 
   .ticket-code {
