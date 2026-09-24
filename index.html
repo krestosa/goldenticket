@@ -10,8 +10,9 @@
 <body class="is-loading">
   <div class="golden-loader" id="goldenLoader" aria-hidden="true">
     <div class="loader-grain"></div>
+    <canvas class="cut-trail" id="cutTrail" aria-hidden="true"></canvas>
 
-    <div class="ticket-stage">
+    <div class="ticket-stage" id="ticketStage">
       <div class="ticket-glow"></div>
 
       <div class="ticket-half ticket-half--top">
@@ -40,7 +41,15 @@
       </div>
     </div>
 
-    <p class="loader-status">ABRIENDO TU TICKET</p>
+    <div class="cut-instruction" id="cutInstruction" aria-hidden="true">
+      <span class="cut-instruction__title">CORTÁ EL TICKET</span>
+      <span class="cut-instruction__gesture">
+        <span class="cut-instruction__track"></span>
+        <span class="cut-instruction__pointer"></span>
+      </span>
+      <span class="cut-instruction__desktop">CLICK + ARRASTRÁ</span>
+      <span class="cut-instruction__touch">DESLIZÁ CON EL DEDO</span>
+    </div>
   </div>
 
   <main class="site-shell" id="site">
