@@ -110,9 +110,56 @@ body.is-loading { overflow: hidden; }
   overflow: hidden;
   border-radius: var(--ticket-edge-corner);
   color: #241807;
-  transform: translateY(33%) scale(.94);
+  transform: translateY(17%) scale(.94);
   transform-origin: center bottom;
   will-change: transform, opacity;
+  --ticket-edge: var(--ticket-edge-step);
+  --ticket-notch: var(--ticket-edge-notch);
+
+  -webkit-mask-image:
+    radial-gradient(circle at 50% 0, transparent 0 var(--ticket-notch), #000 calc(var(--ticket-notch) + .55px)),
+    radial-gradient(circle at 50% 100%, transparent 0 var(--ticket-notch), #000 calc(var(--ticket-notch) + .55px)),
+    radial-gradient(circle at 0 50%, transparent 0 var(--ticket-notch), #000 calc(var(--ticket-notch) + .55px)),
+    radial-gradient(circle at 100% 50%, transparent 0 var(--ticket-notch), #000 calc(var(--ticket-notch) + .55px));
+  -webkit-mask-size:
+    var(--ticket-edge) 100%,
+    var(--ticket-edge) 100%,
+    100% var(--ticket-edge),
+    100% var(--ticket-edge);
+  -webkit-mask-position:
+    top left,
+    bottom left,
+    top left,
+    top right;
+  -webkit-mask-repeat:
+    repeat-x,
+    repeat-x,
+    repeat-y,
+    repeat-y;
+  -webkit-mask-composite: source-in, source-in, source-in;
+
+  mask-image:
+    radial-gradient(circle at 50% 0, transparent 0 var(--ticket-notch), #000 calc(var(--ticket-notch) + .55px)),
+    radial-gradient(circle at 50% 100%, transparent 0 var(--ticket-notch), #000 calc(var(--ticket-notch) + .55px)),
+    radial-gradient(circle at 0 50%, transparent 0 var(--ticket-notch), #000 calc(var(--ticket-notch) + .55px)),
+    radial-gradient(circle at 100% 50%, transparent 0 var(--ticket-notch), #000 calc(var(--ticket-notch) + .55px));
+  mask-size:
+    var(--ticket-edge) 100%,
+    var(--ticket-edge) 100%,
+    100% var(--ticket-edge),
+    100% var(--ticket-edge);
+  mask-position:
+    top left,
+    bottom left,
+    top left,
+    top right;
+  mask-repeat:
+    repeat-x,
+    repeat-x,
+    repeat-y,
+    repeat-y;
+  mask-composite: intersect, intersect, intersect;
+
   background:
     radial-gradient(ellipse at 18% 14%, rgba(255,255,255,.38) 0%, rgba(255,255,255,.10) 11%, transparent 29%),
     radial-gradient(ellipse at 82% 82%, rgba(84,47,5,.20) 0%, transparent 30%),
@@ -261,7 +308,7 @@ body.is-loading { overflow: hidden; }
   overflow: hidden;
   background:
     linear-gradient(165deg, rgba(255,255,255,.055), transparent 33%),
-    linear-gradient(180deg, #141414 0%, #090909 100%);
+    linear-gradient(180deg, #121212 0%, #070707 100%);
   border: 1px solid rgba(255, 220, 131, .17);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.05),
@@ -287,15 +334,16 @@ body.is-loading { overflow: hidden; }
 
 .envelope-logo {
   position: absolute;
-  z-index: 5;
+  z-index: 6;
   left: 50%;
-  bottom: 13%;
+  top: 31%;
   display: grid;
   justify-items: center;
   gap: .4rem;
-  transform: translateX(-50%);
-  color: rgba(255,255,255,.92);
+  transform: translate(-50%, -50%);
+  color: rgba(255,255,255,.94);
   text-shadow: 0 1px 14px rgba(255,255,255,.06);
+  backface-visibility: hidden;
 }
 
 .envelope-logo strong {
@@ -313,13 +361,13 @@ body.is-loading { overflow: hidden; }
 
 .envelope-flap {
   z-index: 5;
-  height: 58%;
+  height: 100%;
   bottom: auto;
   border-radius: clamp(1rem, 2vw, 1.65rem) clamp(1rem, 2vw, 1.65rem) 0 0;
   transform-origin: 50% 0;
   transform: rotateX(0deg);
   backface-visibility: hidden;
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 39%, 50% 78%, 0 39%);
   background:
     linear-gradient(180deg, rgba(255,255,255,.055), transparent 38%),
     linear-gradient(145deg, #1b1b1b 0%, #101010 62%, #080808 100%);
@@ -353,7 +401,7 @@ body.is-loading { overflow: hidden; }
 }
 
 .golden-loader.is-opening-envelope .envelope-flap {
-  transform: rotateX(172deg);
+  transform: rotateX(176deg);
   transition: transform .58s cubic-bezier(.22,.72,.18,1);
 }
 
@@ -454,10 +502,16 @@ body.is-loading { overflow: hidden; }
   }
 
   .envelope-ticket {
+    --ticket-edge: clamp(.78rem, 3.4vw, 1rem);
+    --ticket-notch: calc(var(--ticket-edge) * .30);
+  }
+
+  .envelope-ticket {
     left: 6%;
     width: 88%;
     height: 76%;
     top: 9%;
+    transform: translateY(18%) scale(.93);
   }
 
   .envelope-ticket .ticket-title {
