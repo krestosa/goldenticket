@@ -26,6 +26,15 @@
     !blackout
   ) return;
 
+  const LOADER_ENABLED = false;
+
+  if (!LOADER_ENABLED) {
+    body.classList.remove("is-loading");
+    body.classList.add("is-revealed", "is-instant-reveal");
+    loader.remove();
+    return;
+  }
+
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let finished = false;
   let running = false;
