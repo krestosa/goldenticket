@@ -557,7 +557,7 @@ body.is-loading { overflow: hidden; }
 }
 
 .site-shell {
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--color-bg);
   opacity: 0;
   transform: scale(1.025);
@@ -576,7 +576,7 @@ body.is-revealed.is-instant-reveal .site-shell {
 
 .hero {
   position: relative;
-  min-height: 100svh;
+  min-height: 100dvh;
   overflow: hidden;
   background: #030303;
 }
@@ -584,8 +584,8 @@ body.is-revealed.is-instant-reveal .site-shell {
 .hero-topline {
   position: relative;
   z-index: 5;
-  height: 92px;
-  padding: 0 clamp(30px, 6.2vw, 92px);
+  height: 78px;
+  padding: 0 clamp(28px, 5.4vw, 82px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -628,29 +628,31 @@ body.is-revealed.is-instant-reveal .site-shell {
 
 .hero-layout {
   position: relative;
-  width: min(1360px, calc(100% - clamp(60px, 12vw, 176px)));
-  min-height: calc(100svh - 92px);
-  margin: 0 auto;
+  width: 100%;
+  min-height: calc(100dvh - 78px);
+  margin: 0;
+  padding-left: clamp(32px, 6.2vw, 92px);
   display: grid;
-  grid-template-columns: minmax(420px, .82fr) minmax(460px, 1.18fr);
-  gap: clamp(48px, 7vw, 112px);
-  align-items: center;
+  grid-template-columns: minmax(420px, 41%) minmax(0, 59%);
+  gap: clamp(44px, 5vw, 84px);
+  align-items: stretch;
 }
 
 .hero-copy {
   position: relative;
   z-index: 3;
-  width: min(100%, 540px);
-  padding: clamp(56px, 7vh, 104px) 0 clamp(64px, 8vh, 112px);
+  width: min(100%, 590px);
+  align-self: center;
+  padding: clamp(44px, 5.5vh, 76px) 0 clamp(48px, 6vh, 84px);
 }
 
 .hero h1 {
   margin: 0;
   display: grid;
   width: max-content;
-  font-size: clamp(6.7rem, 9.4vw, 10.8rem);
-  line-height: .77;
-  letter-spacing: -.035em;
+  font-size: clamp(7.4rem, 9.9vw, 11.5rem);
+  line-height: .755;
+  letter-spacing: -.032em;
   font-weight: var(--font-weight-black);
 }
 
@@ -666,22 +668,23 @@ body.is-revealed.is-instant-reveal .site-shell {
 }
 
 .hero-kicker {
-  margin: 2.35rem 0 0;
-  font-size: clamp(.82rem, 1vw, 1rem);
+  margin: 2.7rem 0 0;
+  font-size: clamp(.9rem, 1vw, 1.04rem);
   line-height: 1;
   letter-spacing: .52em;
   color: rgba(255,255,255,.74);
 }
 
 .hero-offer {
-  margin-top: clamp(2.8rem, 5vh, 4.4rem);
+  margin-top: clamp(3rem, 5.2vh, 4.6rem);
 }
 
 .hero-description {
   margin: 0;
   font-family: var(--font-body);
-  font-size: clamp(1.18rem, 1.45vw, 1.48rem);
-  line-height: 1.5;
+  max-width: 35ch;
+  font-size: clamp(1.24rem, 1.5vw, 1.56rem);
+  line-height: 1.52;
   letter-spacing: -.012em;
   color: rgba(255,255,255,.86);
 }
@@ -692,9 +695,9 @@ body.is-revealed.is-instant-reveal .site-shell {
 
 .hero-discount {
   display: block;
-  margin: .8rem 0 .3rem;
-  font-size: clamp(4.8rem, 6.6vw, 7.6rem);
-  line-height: .92;
+  margin: 1rem 0 .42rem;
+  font-size: clamp(5.4rem, 6.9vw, 8rem);
+  line-height: .9;
   letter-spacing: -.035em;
   color: #d4aa68;
   font-weight: var(--font-weight-bold);
@@ -706,8 +709,8 @@ body.is-revealed.is-instant-reveal .site-shell {
   align-items: center;
   justify-content: space-between;
   gap: 4.2rem;
-  min-width: 270px;
-  min-height: 62px;
+  min-width: 286px;
+  min-height: 64px;
   padding: 0 1.8rem;
   border: 1px solid rgba(255,255,255,.32);
   border-radius: 999px;
@@ -737,109 +740,144 @@ body.is-revealed.is-instant-reveal .site-shell {
 
 .hero-media {
   position: relative;
-  min-height: min(82svh, 820px);
+  min-height: calc(100dvh - 78px);
   align-self: stretch;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  overflow: hidden;
+}
+
+.hero-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, #030303 0%, rgba(3,3,3,.72) 8%, rgba(3,3,3,0) 28%);
 }
 
 @media (max-width: 980px) {
   .hero-topline {
-    height: 78px;
-    padding: 0 26px;
+    height: 72px;
+    padding: 0 24px;
+  }
+
+  .hero-logo {
+    width: 122px;
+  }
+
+  .hero-anniversary-logo {
+    width: 44px;
+    max-height: 42px;
+  }
+
+  .hero-channel {
+    font-size: .58rem;
   }
 
   .hero-layout {
-    width: calc(100% - 44px);
-    min-height: calc(100svh - 78px);
+    min-height: calc(100dvh - 72px);
+    padding: 0 24px;
     grid-template-columns: 1fr;
     gap: 0;
-    align-items: start;
   }
 
   .hero-copy {
-    width: 100%;
-    max-width: 640px;
-    padding: 54px 0 26px;
+    width: min(100%, 680px);
+    padding: 52px 0 36px;
   }
 
   .hero h1 {
-    font-size: clamp(6rem, 18vw, 9rem);
+    font-size: clamp(6.2rem, 18vw, 9.2rem);
+  }
+
+  .hero-kicker {
+    margin-top: 2rem;
+  }
+
+  .hero-offer {
+    margin-top: 2.8rem;
   }
 
   .hero-description {
-    font-size: clamp(1.1rem, 2.6vw, 1.35rem);
+    max-width: 32ch;
+    font-size: clamp(1.16rem, 2.5vw, 1.36rem);
   }
 
   .hero-discount {
-    font-size: clamp(4.7rem, 13vw, 6.8rem);
+    font-size: clamp(5rem, 13vw, 7rem);
   }
 
   .hero-media {
-    min-height: 54svh;
+    min-height: 52dvh;
+    margin-inline: -24px;
+  }
+
+  .hero-media::before {
+    background: linear-gradient(180deg, #030303 0%, rgba(3,3,3,.42) 14%, rgba(3,3,3,0) 34%);
   }
 }
 
 @media (max-width: 560px) {
   .hero-topline {
-    height: 70px;
+    height: 68px;
     padding: 0 18px;
   }
 
   .hero-brand {
-    gap: .7rem;
+    gap: .65rem;
   }
 
   .hero-logo {
-    width: 108px;
+    width: 104px;
   }
 
   .hero-brand-separator {
-    height: 28px;
+    height: 26px;
   }
 
   .hero-anniversary-logo {
-    width: 38px;
-    max-height: 38px;
+    width: 36px;
+    max-height: 34px;
   }
 
   .hero-channel {
-    max-width: 130px;
+    max-width: 118px;
     text-align: right;
     white-space: normal;
-    line-height: 1.4;
-    font-size: .52rem;
-    letter-spacing: .14em;
+    line-height: 1.3;
+    font-size: .5rem;
+    letter-spacing: .13em;
   }
 
   .hero-layout {
-    width: calc(100% - 32px);
-    min-height: calc(100svh - 70px);
+    min-height: calc(100dvh - 68px);
+    padding: 0 18px;
   }
 
   .hero-copy {
-    padding: 44px 0 24px;
+    padding: 40px 0 30px;
   }
 
   .hero h1 {
-    font-size: clamp(5rem, 21vw, 7rem);
-    line-height: .79;
+    font-size: clamp(5.2rem, 22vw, 7rem);
+    line-height: .77;
   }
 
   .hero-kicker {
-    margin-top: 1.8rem;
-    font-size: .72rem;
+    margin-top: 1.75rem;
+    font-size: .76rem;
     letter-spacing: .42em;
   }
 
   .hero-offer {
-    margin-top: 2.4rem;
+    margin-top: 2.35rem;
   }
 
   .hero-description {
-    font-size: 1.08rem;
-    line-height: 1.52;
+    max-width: 29ch;
+    font-size: 1.12rem;
+    line-height: 1.5;
   }
 
   .hero-description br {
@@ -847,46 +885,20 @@ body.is-revealed.is-instant-reveal .site-shell {
   }
 
   .hero-discount {
-    margin-top: .7rem;
-    font-size: clamp(4.2rem, 18vw, 5.9rem);
+    margin-top: .8rem;
+    font-size: clamp(4.6rem, 19vw, 6rem);
   }
 
   .hero-cta {
-    min-width: 245px;
+    min-width: 250px;
     min-height: 58px;
+    margin-top: 2.25rem;
     gap: 3rem;
-    margin-top: 2.2rem;
   }
 
   .hero-media {
-    min-height: 48svh;
-  }
-}
-
-@keyframes siteReveal {
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes orbit {
-  to { transform: rotate(360deg); }
-}
-
-@media (max-width: 700px) {
-  .hero { padding: var(--layout-margin); }
-
-  .hero h1 {
-    font-size: clamp(68px, 24vw, 118px);
-  }
-
-  .hero-orbit {
-    right: -54vw;
-    width: 104vw;
-  }
-
-  .hero-topline,
-  .hero-footer {
-    font-size: 8px;
-    letter-spacing: .14em;
+    min-height: 46dvh;
+    margin-inline: -18px;
   }
 }
 

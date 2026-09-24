@@ -56,8 +56,8 @@
   --color-text-muted: rgba(255, 255, 255, .46);
   --color-line: rgba(255, 255, 255, .14);
   --color-line-strong: rgba(255, 255, 255, .22);
-  --color-accent: var(--blue-500);
-  --color-accent-hover: var(--blue-400);
+  --color-accent: var(--gold-500);
+  --color-accent-hover: var(--gold-400);
   --color-ticket-ink: #241706;
   --color-ticket-gold-dark: var(--gold-800);
   --color-ticket-gold-mid: var(--gold-500);
