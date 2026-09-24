@@ -1,66 +1,110 @@
 (() => {
   const loader = document.getElementById("goldenLoader");
   const scene = document.getElementById("envelopeScene");
-  const shell = document.getElementById("envelopeShell");
+  const shadow = document.getElementById("envelopeShadow");
+  const back = document.getElementById("envelopeBack");
+  const front = document.getElementById("envelopeFront");
   const flap = document.getElementById("envelopeFlap");
+  const flapFace = document.getElementById("envelopeFlapFace");
   const ticketMotion = document.getElementById("ticketMotion");
   const ticket = document.getElementById("goldenTicket");
   const zoomLetter = document.getElementById("zoomLetter");
+  const blackout = document.getElementById("zoomBlackout");
   const body = document.body;
 
-  if (!loader || !scene || !shell || !flap || !ticketMotion || !ticket || !zoomLetter) return;
+  if (
+    !loader ||
+    !scene ||
+    !shadow ||
+    !back ||
+    !front ||
+    !flap ||
+    !flapFace ||
+    !ticketMotion ||
+    !ticket ||
+    !zoomLetter ||
+    !blackout
+  ) return;
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const timers = new Set();
   let finished = false;
-  let zoomStarted = false;
+  let running = false;
 
-  const later = (fn, delay) => {
-    const id = window.setTimeout(() => {
-      timers.delete(id);
-      fn();
-    }, delay);
-    timers.add(id);
-    return id;
-  };
+  const nextFrame = () => new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(resolve));
+  });
 
-  const clearTimers = () => {
-    timers.forEach((id) => window.clearTimeout(id));
-    timers.clear();
-  };
+  const waitForMotion = (element, kind, name, fallbackMs) => new Promise((resolve) => {
+    let settled = false;
+    const eventName = kind === "animation" ? "animationend" : "transitionend";
 
-  const prepareEnvelopeMotion = () => {
+    const finishWait = () => {
+      if (settled) return;
+      settled = true;
+      element.removeEventListener(eventName, onEnd);
+      window.clearTimeout(fallback);
+      resolve();
+    };
+
+    const onEnd = (event) => {
+      if (event.target !== element) return;
+
+      if (kind === "animation" && event.animationName !== name) return;
+      if (kind === "transition" && event.propertyName !== name) return;
+
+      finishWait();
+    };
+
+    const fallback = window.setTimeout(finishWait, fallbackMs);
+    element.addEventListener(eventName, onEnd);
+  });
+
+  const setMotionMetrics = () => {
     const ticketRect = ticket.getBoundingClientRect();
     const sceneRect = scene.getBoundingClientRect();
-    const drop = Math.max(window.innerHeight * 0.72, sceneRect.height * 1.35);
-    const rise = Math.min(ticketRect.height * 0.30, 150);
+
+    const drop = Math.max(
+      window.innerHeight * 0.70,
+      sceneRect.height * 0.98
+    );
+
+    const rise = Math.min(
+      ticketRect.height * 0.30,
+      sceneRect.height * 0.14
+    );
 
     scene.style.setProperty("--envelope-drop-y", `${drop.toFixed(2)}px`);
-    scene.style.setProperty("--ticket-rise-y", `${(-drop - rise).toFixed(2)}px`);
+    scene.style.setProperty("--ticket-rise-y", `${(-rise).toFixed(2)}px`);
   };
 
-  const prepareTicketCenter = () => {
+  const setTicketCenterTarget = () => {
     const rect = ticket.getBoundingClientRect();
-    const correction = window.innerHeight * 0.5 - (rect.top + rect.height * 0.5);
-    const current = parseFloat(getComputedStyle(scene).getPropertyValue("--ticket-rise-y")) || 0;
-    scene.style.setProperty("--ticket-center-y", `${(current + correction).toFixed(2)}px`);
+    const centerY = rect.top + rect.height * 0.5;
+    const correction = window.innerHeight * 0.5 - centerY;
+    const rise = parseFloat(getComputedStyle(scene).getPropertyValue("--ticket-rise-y")) || 0;
+
+    scene.style.setProperty("--ticket-center-y", `${(rise + correction).toFixed(2)}px`);
   };
 
-  const prepareLetterZoom = () => {
+  const setLetterZoomTarget = () => {
     const ticketRect = ticket.getBoundingClientRect();
     const letterRect = zoomLetter.getBoundingClientRect();
 
     const localX = letterRect.left + letterRect.width * 0.5 - ticketRect.left;
     const localY = letterRect.top + letterRect.height * 0.5 - ticketRect.top;
 
-    const scaleX = window.innerWidth / Math.max(1, letterRect.width);
-    const scaleY = window.innerHeight / Math.max(1, letterRect.height);
-    const zoomScale = Math.max(scaleX, scaleY) * 3.35;
+    const scaleToCover = Math.max(
+      window.innerWidth / Math.max(letterRect.width, 1),
+      window.innerHeight / Math.max(letterRect.height, 1)
+    );
 
-    const tx = window.innerWidth * 0.5 - ticketRect.left - localX * zoomScale;
-    const ty = window.innerHeight * 0.5 - ticketRect.top - localY * zoomScale;
+    // The I is solid black. Overscaling guarantees its painted body reaches
+    // beyond every viewport edge before the final black frame.
+    const scale = Math.max(28, scaleToCover * 3.6);
+    const tx = window.innerWidth * 0.5 - ticketRect.left - localX * scale;
+    const ty = window.innerHeight * 0.5 - ticketRect.top - localY * scale;
 
-    ticket.style.setProperty("--zoom-scale", zoomScale.toFixed(4));
+    ticket.style.setProperty("--zoom-scale", scale.toFixed(4));
     ticket.style.setProperty("--zoom-tx", `${tx.toFixed(2)}px`);
     ticket.style.setProperty("--zoom-ty", `${ty.toFixed(2)}px`);
   };
@@ -68,9 +112,9 @@
   const finish = () => {
     if (finished) return;
     finished = true;
-    clearTimers();
 
     body.classList.remove("is-loading");
+    body.classList.add("is-revealed", "is-instant-reveal");
     loader.classList.add("is-gone");
 
     requestAnimationFrame(() => {
@@ -78,67 +122,53 @@
     });
   };
 
-  const revealWeb = () => {
-    if (finished) return;
-    body.classList.add("is-revealed", "is-instant-reveal");
-    finish();
-  };
-
-  const onZoomEnd = (event) => {
-    if (event.animationName !== "ticketLetterZoom") return;
-    ticket.removeEventListener("animationend", onZoomEnd);
-    revealWeb();
-  };
-
-  const startZoom = () => {
-    if (zoomStarted || finished) return;
-    zoomStarted = true;
-    prepareLetterZoom();
-    ticket.addEventListener("animationend", onZoomEnd);
-    loader.classList.add("is-zooming");
-  };
-
-  const openFlap = () => {
-    loader.classList.add("is-flap-up");
-
-    flap.addEventListener("animationend", () => {
-      loader.classList.add("is-flap-behind");
-    }, { once: true });
-  };
-
-  const play = () => {
-    if (finished) return;
+  const play = async () => {
+    if (running || finished) return;
+    running = true;
 
     if (reducedMotion) {
-      body.classList.add("is-revealed", "is-instant-reveal");
       finish();
       return;
     }
 
-    prepareEnvelopeMotion();
+    setMotionMetrics();
 
-    requestAnimationFrame(() => {
-      loader.classList.add("is-arriving");
-    });
+    loader.classList.add("is-arriving");
+    await waitForMotion(scene, "animation", "envelopeEnter", 900);
 
-    later(openFlap, 760);
+    // 1. Lift only the flap. It drops behind the pocket immediately,
+    // matching the reference envelope construction.
+    loader.classList.add("is-flap-up");
+    await waitForMotion(flapFace, "animation", "flapLift", 900);
 
-    later(() => {
-      prepareEnvelopeMotion();
-      loader.classList.add("is-envelope-drop");
-    }, 1640);
+    // 2. The envelope pieces move down together. The ticket is a sibling,
+    // so it can rise independently instead of counter-transforming a parent.
+    setMotionMetrics();
+    loader.classList.add("is-envelope-drop");
+    await waitForMotion(front, "transition", "transform", 1100);
 
-    later(() => {
-      prepareTicketCenter();
-      loader.classList.add("is-ticket-center");
-    }, 2580);
+    // 3. The ticket returns from its small rise to the exact viewport center.
+    setTicketCenterTarget();
+    loader.classList.add("is-ticket-center");
+    await waitForMotion(ticketMotion, "transition", "transform", 900);
 
-    later(startZoom, 3380);
+    // 4. Measure the glyph only after every previous transform has settled.
+    await nextFrame();
+    setLetterZoomTarget();
+    loader.classList.add("is-zooming");
+
+    // The black frame is the authority for the transition. The web is never
+    // revealed from the ticket animation itself.
+    await waitForMotion(blackout, "animation", "zoomBlackout", 1800);
+
+    // Keep one fully rendered black frame, then swap immediately to the site.
+    await nextFrame();
+    finish();
   };
 
   window.addEventListener("resize", () => {
-    if (finished || zoomStarted) return;
-    prepareEnvelopeMotion();
+    if (running || finished) return;
+    setMotionMetrics();
   }, { passive: true });
 
   window.GoldenTicketLoader = { play, finish };
