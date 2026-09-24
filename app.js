@@ -44,6 +44,7 @@
   const setCutProgress = (progress, pointerX) => {
     const clamped = Math.max(0, Math.min(1, progress));
     loader.style.setProperty("--cut-progress", clamped.toFixed(4));
+    loader.style.setProperty("--gesture-progress", clamped.toFixed(4));
 
     if (typeof pointerX === "number" && ticketRect) {
       const x = Math.max(0, Math.min(ticketRect.width, pointerX - ticketRect.left));
@@ -222,7 +223,7 @@
       instruction.classList.add("is-hidden");
     }
 
-    later(openTicket, reducedMotion ? 40 : 180);
+    later(openTicket, reducedMotion ? 40 : 260);
   };
 
   const resetCut = () => {
@@ -246,7 +247,7 @@
 
     ticketRect = ticket.getBoundingClientRect();
     cutCenterY = ticketRect.top + ticketRect.height * 0.5;
-    cutBand = Math.max(70, Math.min(130, ticketRect.height * 0.18));
+    cutBand = Math.max(96, Math.min(180, ticketRect.height * 0.26));
 
     if (
       event.clientX < ticketRect.left - 24 ||
@@ -290,16 +291,16 @@
     const availableDistance = direction > 0
       ? ticketRect.right - startX
       : startX - ticketRect.left;
-    const requiredDistance = Math.max(ticketRect.width * 0.42, availableDistance * 0.90);
+    const requiredDistance = Math.max(ticketRect.width * 0.30, availableDistance * 0.68);
     const horizontalProgress = Math.max(0, Math.min(1, dx / requiredDistance));
     const yDistance = Math.abs(event.clientY - cutCenterY);
-    const alignment = Math.max(0, 1 - yDistance / (cutBand * 1.5));
-    const progress = horizontalProgress * (0.78 + alignment * 0.22);
+    const alignment = Math.max(0, 1 - yDistance / (cutBand * 1.9));
+    const progress = horizontalProgress * (0.88 + alignment * 0.12);
 
     setCutProgress(progress, event.clientX);
     pushTrailPoint(event.clientX, event.clientY, event.pressure);
 
-    if (progress >= 0.94 && yDistance <= cutBand * 1.3) {
+    if (progress >= 0.66 && yDistance <= cutBand * 1.65) {
       completeCut();
     }
 
@@ -317,8 +318,17 @@
 
     if (cutComplete) return;
 
+    const currentProgress = Number.parseFloat(
+      getComputedStyle(loader).getPropertyValue("--cut-progress")
+    ) || 0;
+
     if (instruction) instruction.classList.remove("is-active");
-    resetCut();
+
+    if (currentProgress >= 0.52) {
+      completeCut();
+    } else {
+      resetCut();
+    }
     event.preventDefault();
   };
 
@@ -327,6 +337,7 @@
 
     loader.classList.remove("is-entering");
     loader.classList.add("is-ready");
+    loader.style.setProperty("--gesture-progress", "0");
     ready = true;
 
     setCutProgress(0, ticket.getBoundingClientRect().left);
