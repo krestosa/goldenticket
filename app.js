@@ -69,8 +69,8 @@
     );
 
     const rise = Math.min(
-      ticketRect.height * 0.30,
-      sceneRect.height * 0.14
+      ticketRect.height * 0.20,
+      sceneRect.height * 0.08
     );
 
     scene.style.setProperty("--envelope-drop-y", `${drop.toFixed(2)}px`);
@@ -100,7 +100,7 @@
 
     // The I is solid black. Overscaling guarantees its painted body reaches
     // beyond every viewport edge before the final black frame.
-    const scale = Math.max(28, scaleToCover * 3.6);
+    const scale = Math.max(24, scaleToCover * 2.85);
     const tx = window.innerWidth * 0.5 - ticketRect.left - localX * scale;
     const ty = window.innerHeight * 0.5 - ticketRect.top - localY * scale;
 
@@ -136,23 +136,26 @@
     loader.classList.add("is-arriving");
     await waitForMotion(scene, "animation", "envelopeEnter", 900);
 
-    // 1. Lift only the flap. It drops behind the pocket immediately,
-    // matching the reference envelope construction.
-    loader.classList.add("is-flap-up");
-    await waitForMotion(flapFace, "animation", "flapLift", 900);
+    // 1. Lift the flap in two physical halves. It stays in front until
+    // exactly edge-on, then moves behind the pocket and finishes the rotation.
+    loader.classList.add("is-flap-front");
+    await waitForMotion(flapFace, "animation", "flapLiftFront", 650);
 
-    // 2. The envelope pieces move down together. The ticket is a sibling,
-    // so it can rise independently instead of counter-transforming a parent.
+    loader.classList.add("is-flap-behind", "is-flap-back");
+    await waitForMotion(flapFace, "animation", "flapLiftBack", 650);
+
+    // 2. Only now does the envelope body slide down while the ticket rises a
+    // small amount independently.
     setMotionMetrics();
     loader.classList.add("is-envelope-drop");
     await waitForMotion(front, "transition", "transform", 1100);
 
-    // 3. The ticket returns from its small rise to the exact viewport center.
+    // 3. Once the envelope is gone, place the ticket at the viewport center.
     setTicketCenterTarget();
     loader.classList.add("is-ticket-center");
     await waitForMotion(ticketMotion, "transition", "transform", 900);
 
-    // 4. Measure the glyph only after every previous transform has settled.
+    // 4. Measure the target glyph after every transform is fully settled.
     await nextFrame();
     setLetterZoomTarget();
     loader.classList.add("is-zooming");

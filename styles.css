@@ -60,9 +60,8 @@ body.is-loading { overflow: hidden; }
   --ticket-center-y: 0px;
 
   position: relative;
-  width: min(88vw, 780px);
-  aspect-ratio: 1.2 / 1;
-  perspective: 1500px;
+  width: min(88vw, 82vh, 780px);
+  aspect-ratio: 1 / 1.1;
   opacity: 0;
   transform: translateY(34px) scale(.97);
   will-change: transform, opacity;
@@ -106,7 +105,7 @@ body.is-loading { overflow: hidden; }
 /* Ticket is independent from the envelope body. It lives between back and pocket. */
 .ticket-motion {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   inset: 0;
   transform: translateY(0);
   will-change: transform;
@@ -121,7 +120,7 @@ body.is-loading { overflow: hidden; }
 
   position: absolute;
   left: 10%;
-  top: 46%;
+  top: 50%;
   width: 80%;
   aspect-ratio: 1.78 / 1;
   overflow: hidden;
@@ -328,7 +327,7 @@ body.is-loading { overflow: hidden; }
    lower 55%, V opening, separate left/right folds. */
 .envelope-front {
   position: absolute;
-  z-index: 3;
+  z-index: 4;
   left: 0;
   right: 0;
   bottom: 0;
@@ -368,7 +367,7 @@ body.is-loading { overflow: hidden; }
    top:45%, height:33%, transform-origin:top. */
 .envelope-flap {
   position: absolute;
-  z-index: 4;
+  z-index: 5;
   top: 45%;
   left: 0;
   width: 100%;
@@ -383,21 +382,32 @@ body.is-loading { overflow: hidden; }
   transform-origin: 50% 0;
   transform: rotateX(0deg);
   transform-style: preserve-3d;
-  filter: drop-shadow(0 6px 3px rgba(0,0,0,.16));
   will-change: transform;
 }
 
-.envelope-flap-face::before {
+.envelope-flap-face::before,
+.envelope-flap-face::after {
   content: "";
   position: absolute;
   inset: 0;
   clip-path: polygon(50% 100%, 0 0, 100% 0);
   -webkit-clip-path: polygon(50% 100%, 0 0, 100% 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.envelope-flap-face::before {
+  transform: translateZ(.1px);
   background:
     linear-gradient(180deg, rgba(255,255,255,.055), transparent 45%),
     linear-gradient(145deg, #191919 0%, #0e0e0e 62%, #060606 100%);
-  backface-visibility: visible;
-  -webkit-backface-visibility: visible;
+}
+
+.envelope-flap-face::after {
+  transform: rotateX(180deg) translateZ(.1px);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.025), transparent 55%),
+    linear-gradient(155deg, #151515 0%, #0b0b0b 68%, #050505 100%);
 }
 
 .envelope-logo {
@@ -432,13 +442,21 @@ body.is-loading { overflow: hidden; }
   animation: envelopeEnter .7s cubic-bezier(.18,.84,.18,1) both;
 }
 
-/* z-index drops as soon as opening starts, not after the rotation. */
-.golden-loader.is-flap-up .envelope-flap {
-  z-index: 1;
+/* Keep the flap in front for the first 90deg. Swap layers only while it is edge-on. */
+.golden-loader.is-flap-front .envelope-flap-face {
+  animation: flapLiftFront .36s ease-in both;
 }
 
-.golden-loader.is-flap-up .envelope-flap-face {
-  animation: flapLift .72s ease-in-out both;
+.golden-loader.is-flap-behind .envelope-flap {
+  z-index: 2;
+}
+
+.golden-loader.is-flap-back .envelope-flap-face {
+  animation: flapLiftBack .36s ease-out both;
+}
+
+.golden-loader.is-flap-back .envelope-logo {
+  visibility: hidden;
 }
 
 .golden-loader.is-envelope-drop .envelope-back,
@@ -495,9 +513,18 @@ body.is-loading { overflow: hidden; }
   }
 }
 
-@keyframes flapLift {
+@keyframes flapLiftFront {
   from {
     transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes flapLiftBack {
+  from {
+    transform: rotateX(-90deg);
   }
   to {
     transform: rotateX(-180deg);
@@ -522,7 +549,7 @@ body.is-loading { overflow: hidden; }
 }
 
 @keyframes zoomBlackout {
-  0%, 99.9% {
+  0%, 98.5% {
     opacity: 0;
   }
   100% {
