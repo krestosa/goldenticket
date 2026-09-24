@@ -31,7 +31,7 @@
   const prepareEnvelopeMotion = () => {
     const ticketRect = ticket.getBoundingClientRect();
     const drop = Math.max(window.innerHeight * 0.72, scene.getBoundingClientRect().height * 0.96);
-    const rise = Math.min(ticketRect.height * 0.34, window.innerWidth <= 700 ? 105 : 155);
+    const rise = Math.min(ticketRect.height * 0.34, 155);
     const centerCorrection = window.innerHeight * 0.5 - (ticketRect.top + ticketRect.height * 0.5);
 
     scene.style.setProperty("--envelope-drop-y", `${drop.toFixed(2)}px`);
@@ -48,7 +48,7 @@
 
     const scaleX = window.innerWidth / Math.max(1, letterRect.width);
     const scaleY = window.innerHeight / Math.max(1, letterRect.height);
-    const zoomScale = Math.max(scaleX, scaleY) * 2.8;
+    const zoomScale = Math.max(scaleX, scaleY) * 3.25;
 
     const tx = window.innerWidth * 0.5 - ticketRect.left - localX * zoomScale;
     const ty = window.innerHeight * 0.5 - ticketRect.top - localY * zoomScale;
