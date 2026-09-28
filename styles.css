@@ -1338,8 +1338,51 @@ body.is-revealed.is-instant-reveal .site-shell {
 }
 
 @media (min-width: 761px) {
+  .campaign-nav__brands {
+    display: none;
+  }
+
+  .campaign-hero__copy {
+    max-width: 920px;
+    padding-top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .campaign-hero__mobile-brands {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: clamp(26px, 2vw, 40px);
+    margin: 0 0 clamp(30px, 3.2vh, 44px);
+    line-height: 0;
+    text-decoration: none;
+  }
+
   .campaign-title {
+    --hero-title-size: clamp(104px, 13vw, 240px);
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: .055em;
+    width: max-content;
     padding-left: 0;
+    padding-right: 0;
+  }
+
+  .campaign-title > span:first-child,
+  .campaign-title__gold {
+    margin-top: 0;
+    padding-top: 0;
+    font-size: 1em;
+  }
+
+  .campaign-hero__body {
+    text-align: left;
   }
 }
 
