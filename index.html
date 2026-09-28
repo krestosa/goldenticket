@@ -45,12 +45,54 @@
 
   <main class="site-shell" id="site">
     <section class="campaign-hero">
+      <video
+        class="campaign-hero__video campaign-hero__video--desktop"
+        src="./assets/bg_hero.mp4"
+        poster="./assets/Generate_alternative_camera_angl…_2K_20260925014050.jpg"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        aria-hidden="true"
+      ></video>
+
+      <video
+        class="campaign-hero__video campaign-hero__video--mobile"
+        src="./assets/bg_hero_mobile.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        aria-hidden="true"
+      ></video>
+
       <header class="campaign-nav">
-        <a class="campaign-nav__logo" href="#top" aria-label="SushiClub">
-          <img src="./assets/sushiclub.svg" alt="SushiClub" />
+        <p class="campaign-nav__side campaign-nav__side--left">GOLDEN TICKET</p>
+
+        <a
+          class="campaign-nav__brands"
+          href="https://www.sushiclub.com.ar/"
+          aria-label="Ir al sitio de SushiClub"
+        >
+          <img
+            class="campaign-nav__sushiclub"
+            src="./assets/sushiclub.svg"
+            width="234"
+            height="34"
+            alt="SushiClub"
+          />
+          <img
+            class="campaign-nav__anniversary"
+            src="./assets/anniversary-25.svg"
+            width="147"
+            height="113"
+            alt="25 Anniversary Edition"
+          />
         </a>
 
-        <a class="campaign-nav__cta" href="#pedido">PEDÍ ONLINE</a>
+        <p class="campaign-nav__side campaign-nav__side--right">DELI&amp;TAKE</p>
       </header>
 
       <div class="campaign-hero__inner" id="top">
@@ -59,8 +101,6 @@
             <span>GOLDEN</span>
             <span class="campaign-title__gold">TICKET</span>
           </h1>
-
-          <p class="campaign-eyebrow">DELI&amp;TAKE</p>
 
           <p class="campaign-hero__body">
             Encontralo en tu pedido y obtené 50% OFF en el Combinado Aniversario 25p para tu próximo pedido online.
@@ -72,9 +112,6 @@
           </a>
         </div>
 
-        <div class="campaign-hero__media media-slot media-slot--hero" aria-hidden="true">
-          <!-- IMAGEN HERO -->
-        </div>
 
         <div class="campaign-scroll" aria-hidden="true">
           <span>SCROLL</span>
@@ -137,13 +174,23 @@
     </section>
 
     <section class="campaign-section anniversary-section">
+      <div class="anniversary-section__video-mask" aria-hidden="true">
+        <video
+          class="anniversary-section__video"
+          src="./assets/25.mp4"
+          autoplay
+          muted
+          loop
+          playsinline
+        ></video>
+      </div>
+
       <div class="campaign-container anniversary-grid">
         <div class="anniversary-media media-slot media-slot--anniversary" aria-hidden="true">
           <!-- IMAGEN TICKET 25 AÑOS -->
         </div>
 
         <div class="anniversary-copy">
-          <p class="section-label">UNA EXPERIENCIA<br />QUE CONTINÚA</p>
           <h2>
             <span>25 AÑOS</span>
             <span>DE MOMENTOS</span>
@@ -186,33 +233,39 @@
     </section>
 
     <section class="campaign-section order-section" id="pedido">
-      <div class="campaign-container order-card">
-        <div class="order-card__media media-slot media-slot--phone" aria-hidden="true">
-          <!-- IMAGEN CELULAR -->
-        </div>
+      <div class="campaign-container order-section__wrap">
+        <div class="order-banner">
+          <div class="order-banner__surface" aria-hidden="true"></div>
 
-        <div class="order-card__copy">
-          <p class="section-label">TU PRÓXIMO PEDIDO</p>
-          <a href="#" class="order-card__link">
-            <span>PEDÍ ONLINE</span>
-            <i aria-hidden="true">→</i>
-          </a>
-          <p class="order-card__sub">Y USÁ TU CUPÓN</p>
+          <div class="order-banner__media" aria-hidden="true">
+            <img
+              class="order-banner__hand"
+              src="./assets/mano.png"
+              alt=""
+            />
+          </div>
+
+          <div class="order-banner__content">
+            <h2 class="order-banner__title">
+              <span class="order-banner__title-main">CONSEGUÍ</span>
+              <span class="order-banner__title-gold">EL TUYO</span>
+            </h2>
+
+            <a href="#" class="order-banner__cta">
+              <span>PEDÍ ONLINE</span>
+              <i aria-hidden="true">→</i>
+            </a>
+          </div>
         </div>
       </div>
     </section>
-
-    <footer class="campaign-footer">
-      <div class="campaign-container campaign-footer__inner">
-        <img src="./assets/sushiclub.svg" alt="SushiClub" />
-
-        <a href="#" class="campaign-footer__legal">
-          <span>BASES, CONDICIONES Y LOCALES ADHERIDOS<br />EN SUSHICLUB.COM.AR/BENEFICIOS</span>
-          <b aria-hidden="true">→</b>
-        </a>
-      </div>
-    </footer>
   </main>
+
+  <footer class="campaign-footer">
+    <div class="campaign-container campaign-footer__inner">
+      <img src="./assets/sushiclub.svg" alt="SushiClub" />
+    </div>
+  </footer>
 
   <script src="./app.js"></script>
 </body>

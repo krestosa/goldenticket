@@ -191,3 +191,43 @@
     window.addEventListener("load", play, { once: true });
   }
 })();
+
+
+/* Order banner responsive X interpolation */
+(() => {
+  const media = document.querySelector(".order-banner__media");
+  if (!media) return;
+
+  const viewportA = 460;
+  const viewportB = 760;
+
+  const updateHandX = () => {
+    if (window.innerWidth > viewportB) {
+      media.style.removeProperty("--hand-x-current");
+      media.style.removeProperty("--hand-size-current");
+      return;
+    }
+
+    const styles = getComputedStyle(media);
+    const xA = Number.parseFloat(styles.getPropertyValue("--hand-x-a")) || 0;
+    const xB = Number.parseFloat(styles.getPropertyValue("--hand-x-b")) || 0;
+    const sizeMin = Number.parseFloat(styles.getPropertyValue("--hand-size-min")) || 0;
+    const sizeMax = Number.parseFloat(styles.getPropertyValue("--hand-size-max")) || 0;
+    const progress = Math.min(
+      1,
+      Math.max(0, (window.innerWidth - viewportA) / (viewportB - viewportA))
+    );
+
+    media.style.setProperty(
+      "--hand-x-current",
+      `${xA + (xB - xA) * progress}px`
+    );
+    media.style.setProperty(
+      "--hand-size-current",
+      `${sizeMin + (sizeMax - sizeMin) * progress}px`
+    );
+  };
+
+  updateHandX();
+  window.addEventListener("resize", updateHandX, { passive: true });
+})();

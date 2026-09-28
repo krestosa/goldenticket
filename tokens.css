@@ -23,16 +23,32 @@
 }
 
 @font-face {
-  font-family: "Field Gothic XCond";
-  src: url("./fonts/FieldGothic-XCond-Bold.otf") format("opentype");
+  font-family: "Field Gothic XXCond";
+  src: url("./fonts/Field Gothic No.22 Reg XXCond.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Field Gothic XXCond";
+  src: url("./fonts/Field Gothic No.25 Bold XXCond.otf") format("opentype");
   font-style: normal;
   font-weight: 700;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Field Gothic XCond";
-  src: url("./fonts/FieldGothic-XCond-XXBold.otf") format("opentype");
+  font-family: "Field Gothic XXCond";
+  src: url("./fonts/Field Gothic No.27 XXBold XXCond.otf") format("opentype");
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Field Gothic XXXCond";
+  src: url("./fonts/Field Gothic No.17 XXBold XXXCond.otf") format("opentype");
   font-style: normal;
   font-weight: 900;
   font-display: swap;
@@ -96,8 +112,31 @@
   --color-ticket-gold-light: var(--gold-300);
   --color-ticket-gold-highlight: var(--gold-200);
 
+  /* Metallic gold text — warmer saturated gold with soft diagonal reflections */
+  --gold-text-gradient:
+    linear-gradient(
+      108deg,
+      transparent 0%,
+      rgba(255, 235, 164, .04) 14%,
+      rgba(255, 226, 127, .22) 30%,
+      rgba(255, 239, 178, .09) 47%,
+      rgba(255, 220, 112, .03) 63%,
+      rgba(255, 231, 145, .15) 80%,
+      transparent 100%
+    ),
+    linear-gradient(
+      108deg,
+      #e6b94f 0%,
+      #d9a73c 16%,
+      #c88c28 31%,
+      #e2b84d 47%,
+      #b9791f 63%,
+      #d39a31 79%,
+      #edc65b 100%
+    );
+
   /* Typography */
-  --font-display: "Field Gothic XCond", "Arial Narrow", sans-serif;
+  --font-display: "Field Gothic XXCond", "Arial Narrow", sans-serif;
   --font-label: "Field Gothic", Arial, Helvetica, sans-serif;
   --font-body: "Inter", Arial, Helvetica, sans-serif;
 
