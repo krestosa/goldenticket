@@ -193,41 +193,128 @@
 })();
 
 
-/* Order banner responsive X interpolation */
+/* Hero video: load only the active breakpoint */
 (() => {
-  const media = document.querySelector(".order-banner__media");
-  if (!media) return;
+  const desktopVideo = document.querySelector(".campaign-hero__video--desktop");
+  const mobileVideo = document.querySelector(".campaign-hero__video--mobile");
+  if (!desktopVideo || !mobileVideo) return;
 
-  const viewportA = 460;
-  const viewportB = 760;
+  const mobileQuery = window.matchMedia("(max-width: 760px)");
+  let activeVideo = null;
 
-  const updateHandX = () => {
-    if (window.innerWidth > viewportB) {
-      media.style.removeProperty("--hand-x-current");
-      media.style.removeProperty("--hand-size-current");
-      return;
-    }
-
-    const styles = getComputedStyle(media);
-    const xA = Number.parseFloat(styles.getPropertyValue("--hand-x-a")) || 0;
-    const xB = Number.parseFloat(styles.getPropertyValue("--hand-x-b")) || 0;
-    const sizeMin = Number.parseFloat(styles.getPropertyValue("--hand-size-min")) || 0;
-    const sizeMax = Number.parseFloat(styles.getPropertyValue("--hand-size-max")) || 0;
-    const progress = Math.min(
-      1,
-      Math.max(0, (window.innerWidth - viewportA) / (viewportB - viewportA))
-    );
-
-    media.style.setProperty(
-      "--hand-x-current",
-      `${xA + (xB - xA) * progress}px`
-    );
-    media.style.setProperty(
-      "--hand-size-current",
-      `${sizeMin + (sizeMax - sizeMin) * progress}px`
-    );
+  const unloadVideo = (video) => {
+    video.onloadeddata = null;
+    video.classList.remove("is-ready");
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
   };
 
-  updateHandX();
-  window.addEventListener("resize", updateHandX, { passive: true });
+  const loadVideo = (video) => {
+    const src = video.dataset.src;
+    if (!src) return;
+
+    video.classList.remove("is-ready");
+
+    const revealAndPlay = () => {
+      video.classList.add("is-ready");
+      const playPromise = video.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {});
+      }
+    };
+
+    video.onloadeddata = revealAndPlay;
+
+    if (video.getAttribute("src") !== src) {
+      video.setAttribute("src", src);
+      video.load();
+    }
+
+    if (video.readyState >= 2) {
+      revealAndPlay();
+    }
+  };
+
+  const syncHeroVideo = () => {
+    const nextVideo = mobileQuery.matches ? mobileVideo : desktopVideo;
+    const previousVideo = nextVideo === mobileVideo ? desktopVideo : mobileVideo;
+
+    if (activeVideo === nextVideo && nextVideo.hasAttribute("src")) return;
+
+    unloadVideo(previousVideo);
+    loadVideo(nextVideo);
+    activeVideo = nextVideo;
+  };
+
+  syncHeroVideo();
+
+  if (typeof mobileQuery.addEventListener === "function") {
+    mobileQuery.addEventListener("change", syncHeroVideo);
+  } else {
+    mobileQuery.addListener(syncHeroVideo);
+  }
 })();
+
+
+/* Pause background videos while offscreen */
+(() => {
+  if (!("IntersectionObserver" in window)) return;
+
+  const videos = [
+    document.querySelector(".campaign-hero__video--desktop"),
+    document.querySelector(".campaign-hero__video--mobile"),
+    document.querySelector(".anniversary-section__video")
+  ].filter(Boolean);
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      const video = entry.target;
+
+      if (entry.isIntersecting && entry.intersectionRatio > 0.05) {
+        if (video.hasAttribute("src")) {
+          const playPromise = video.play();
+          if (playPromise && typeof playPromise.catch === "function") {
+            playPromise.catch(() => {});
+          }
+        }
+      } else {
+        video.pause();
+      }
+    }
+  }, {
+    root: null,
+    rootMargin: "120px 0px",
+    threshold: [0, 0.05]
+  });
+
+  videos.forEach((video) => observer.observe(video));
+})();
+
+/* One-shot viewport reveals */
+(() => {
+  const targets = Array.from(document.querySelectorAll(".reveal-target"));
+  if (!targets.length) return;
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (reducedMotion || !("IntersectionObserver" in window)) {
+    targets.forEach((target) => target.classList.add("is-visible"));
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
+    }
+  }, {
+    root: null,
+    rootMargin: "0px 0px -8% 0px",
+    threshold: 0.08
+  });
+
+  targets.forEach((target) => observer.observe(target));
+})();
+

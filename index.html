@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#050505" />
   <title>Golden Ticket</title>
+  <script>document.documentElement.classList.add("has-js");</script>
+  <link rel="preload" href="./assets/bg_hero.mp4" as="video" type="video/mp4" media="(min-width: 761px)" />
+  <link rel="preload" href="./assets/bg_hero_mobile.mp4" as="video" type="video/mp4" media="(max-width: 760px)" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body class="is-revealed is-instant-reveal">
@@ -47,24 +51,24 @@
     <section class="campaign-hero">
       <video
         class="campaign-hero__video campaign-hero__video--desktop"
-        src="./assets/bg_hero.mp4"
+        data-src="./assets/bg_hero.mp4"
         poster="./assets/Generate_alternative_camera_angl…_2K_20260925014050.jpg"
         autoplay
         muted
         loop
         playsinline
-        preload="auto"
+        preload="none"
         aria-hidden="true"
       ></video>
 
       <video
         class="campaign-hero__video campaign-hero__video--mobile"
-        src="./assets/bg_hero_mobile.mp4"
+        data-src="./assets/bg_hero_mobile.mp4"
         autoplay
         muted
         loop
         playsinline
-        preload="auto"
+        preload="none"
         aria-hidden="true"
       ></video>
 
@@ -97,13 +101,35 @@
 
       <div class="campaign-hero__inner" id="top">
         <div class="campaign-hero__copy">
+          <a
+            class="campaign-hero__mobile-brands"
+            href="https://www.sushiclub.com.ar/"
+            aria-label="Ir al sitio de SushiClub"
+          >
+            <img
+              class="campaign-nav__sushiclub"
+              src="./assets/sushiclub.svg"
+              width="234"
+              height="34"
+              alt="SushiClub"
+            />
+            <img
+              class="campaign-nav__anniversary"
+              src="./assets/anniversary-25.svg"
+              width="147"
+              height="113"
+              alt="25 Anniversary Edition"
+            />
+          </a>
+
           <h1 class="campaign-title">
             <span>GOLDEN</span>
             <span class="campaign-title__gold">TICKET</span>
           </h1>
 
           <p class="campaign-hero__body">
-            Encontralo en tu pedido y obtené 50% OFF en el Combinado Aniversario 25p para tu próximo pedido online.
+            <span class="campaign-hero__body-desktop">Encontralo en tu pedido y obtené 50% OFF en el Combinado Aniversario 25p para tu próximo pedido online.</span>
+            <span class="campaign-hero__body-mobile">Encontrá tu Golden Ticket y disfrutá 50% OFF en el Combinado Aniversario 25p</span>
           </p>
 
           <a class="campaign-button campaign-button--light" href="#pedido">
@@ -122,18 +148,12 @@
 
     <section class="campaign-section prize-section" id="beneficio">
       <div class="campaign-container prize-grid">
-        <div class="prize-copy">
-          <p class="section-label">EL PREMIO</p>
-
+        <div class="prize-copy reveal-target">
           <h2 class="prize-title">
             <span>50% OFF</span>
             <small>EN EL COMBINADO<br />ANIVERSARIO 25P</small>
           </h2>
         </div>
-
-        <p class="prize-description">
-          Escaneá el código QR de tu Golden Ticket y obtené un cupón del 50% OFF en el Combinado Aniversario 25p para tu próximo pedido online.
-        </p>
 
         <div class="prize-media media-slot media-slot--prize" aria-hidden="true">
           <!-- IMAGEN COMBINADO / SUSHI -->
@@ -143,29 +163,26 @@
 
     <section class="campaign-section steps-section">
       <div class="campaign-container">
-        <p class="section-label">CÓMO FUNCIONA</p>
+        <h2 class="steps-section__title reveal-target">CÓMO FUNCIONA</h2>
 
         <div class="steps-grid">
-          <article class="step-card">
+          <article class="step-card reveal-target">
             <div class="step-card__head">
               <span class="step-number">01</span>
-              <span class="step-icon step-icon--box" aria-hidden="true"></span>
             </div>
             <p>Encontrá el Golden Ticket en tu pedido de Delivery o Take Away.</p>
           </article>
 
-          <article class="step-card">
+          <article class="step-card reveal-target">
             <div class="step-card__head">
               <span class="step-number">02</span>
-              <span class="step-icon step-icon--qr" aria-hidden="true"></span>
             </div>
             <p>Escaneá el código QR.</p>
           </article>
 
-          <article class="step-card">
+          <article class="step-card reveal-target">
             <div class="step-card__head">
               <span class="step-number">03</span>
-              <span class="step-icon step-icon--percent" aria-hidden="true">%</span>
             </div>
             <p>Obtené tu cupón del 50% OFF en el Combinado Aniversario 25p para tu próximo pedido online.</p>
           </article>
@@ -190,7 +207,7 @@
           <!-- IMAGEN TICKET 25 AÑOS -->
         </div>
 
-        <div class="anniversary-copy">
+        <div class="anniversary-copy reveal-target">
           <h2>
             <span>25 AÑOS</span>
             <span>DE MOMENTOS</span>
@@ -200,33 +217,42 @@
       </div>
     </section>
 
+    <div class="campaign-tail">
     <section class="campaign-section info-section">
       <div class="campaign-container info-layout">
-        <p class="section-label info-layout__label">INFORMACIÓN<br />IMPORTANTE</p>
+        <h2 class="info-section__title reveal-target">INFORMACIÓN IMPORTANTE</h2>
 
         <div class="info-grid">
-          <article class="info-item">
-            <span class="info-icon info-icon--calendar" aria-hidden="true"></span>
-            <strong>Vigencia</strong>
-            <p>Hasta el 31/10.</p>
+          <article class="info-item reveal-target">
+            <span class="material-symbols-outlined info-google-icon" aria-hidden="true">calendar_month</span>
+            <div class="info-item__copy">
+              <strong>Vigencia</strong>
+              <p>Hasta el 31/10.</p>
+            </div>
           </article>
 
-          <article class="info-item">
-            <span class="info-icon info-icon--person" aria-hidden="true"></span>
-            <strong>Uso</strong>
-            <p>Una sola vez por persona.</p>
+          <article class="info-item reveal-target">
+            <span class="material-symbols-outlined info-google-icon" aria-hidden="true">person</span>
+            <div class="info-item__copy">
+              <strong>Uso</strong>
+              <p>Una sola vez por persona.</p>
+            </div>
           </article>
 
-          <article class="info-item">
-            <span class="info-icon info-icon--card" aria-hidden="true"></span>
-            <strong>Acumulable</strong>
-            <p>Solo con Galicia Éminent.</p>
+          <article class="info-item reveal-target">
+            <span class="material-symbols-outlined info-google-icon" aria-hidden="true">credit_card</span>
+            <div class="info-item__copy">
+              <strong>Acumulable</strong>
+              <p>Solo con Galicia Éminent.</p>
+            </div>
           </article>
 
-          <article class="info-item">
-            <span class="info-icon info-icon--percent" aria-hidden="true">%</span>
-            <strong>No acumulable</strong>
-            <p>No se suma con el descuento de Delivery / Take Away ni con la acción del domingo 11.</p>
+          <article class="info-item reveal-target">
+            <span class="material-symbols-outlined info-google-icon" aria-hidden="true">block</span>
+            <div class="info-item__copy">
+              <strong>No acumulable</strong>
+              <p>No se suma con el descuento de Delivery / Take Away ni con la acción del domingo 11.</p>
+            </div>
           </article>
         </div>
       </div>
@@ -234,7 +260,7 @@
 
     <section class="campaign-section order-section" id="pedido">
       <div class="campaign-container order-section__wrap">
-        <div class="order-banner">
+        <div class="order-banner reveal-target">
           <div class="order-banner__surface" aria-hidden="true"></div>
 
           <div class="order-banner__media" aria-hidden="true">
@@ -259,13 +285,14 @@
         </div>
       </div>
     </section>
-  </main>
 
-  <footer class="campaign-footer">
-    <div class="campaign-container campaign-footer__inner">
-      <img src="./assets/sushiclub.svg" alt="SushiClub" />
+    <footer class="campaign-footer">
+      <div class="campaign-container campaign-footer__inner">
+        <img src="./assets/sushiclub.svg" alt="SushiClub" />
+      </div>
+    </footer>
     </div>
-  </footer>
+  </main>
 
   <script src="./app.js"></script>
 </body>
