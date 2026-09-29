@@ -1847,7 +1847,7 @@ body.is-revealed.is-instant-reveal .site-shell {
     max-width: none;
     padding: 0;
     overflow: visible;
-    font-size: clamp(6.5rem, 28vw, 9.2rem);
+    font-size: clamp(6.5rem, 38vw, 9.2rem);
     line-height: .76;
     letter-spacing: .018em;
   }
@@ -1866,7 +1866,8 @@ body.is-revealed.is-instant-reveal .site-shell {
 
   .prize-order {
     margin-top: 12px;
-    font-size: clamp(1.45rem, 6.3vw, 2.15rem);
+    font-size: clamp(1.55rem, 6.8vw, 2.3rem);
+    font-weight: 600;
     line-height: .92;
   }
 
