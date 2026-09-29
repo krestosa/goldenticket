@@ -327,6 +327,115 @@
 })();
 
 
+/* Gold sheen: first sweep 2s after viewport entry, then every 4s */
+(() => {
+  const targets = Array.from(document.querySelectorAll("[data-gold-sheen]"));
+  if (!targets.length) return;
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const basePosition = "-120% 50%, 42% 50%, 50% 50%";
+  const states = new WeakMap();
+
+  const runSweep = (target, state) => {
+    if (!state || state.animation) return;
+
+    target.style.backgroundPosition = basePosition;
+
+    const animation = target.animate([
+      { backgroundPosition: basePosition },
+      { backgroundPosition: "-20% 50%, 42% 50%, 50% 50%", offset: .22 },
+      { backgroundPosition: "78% 50%, 42% 50%, 50% 50%", offset: .5 },
+      { backgroundPosition: "180% 50%, 42% 50%, 50% 50%" }
+    ], {
+      duration: 1000,
+      easing: "ease-in-out",
+      fill: "none"
+    });
+
+    state.animation = animation;
+
+    const reset = () => {
+      if (state.animation === animation) {
+        state.animation = null;
+      }
+      target.style.backgroundPosition = basePosition;
+    };
+
+    animation.addEventListener("finish", reset, { once: true });
+    animation.addEventListener("cancel", reset, { once: true });
+  };
+
+  const stopSheen = (target) => {
+    const state = states.get(target);
+    if (!state) {
+      target.style.backgroundPosition = basePosition;
+      return;
+    }
+
+    clearTimeout(state.firstTimer);
+    clearInterval(state.interval);
+
+    if (state.animation) {
+      state.animation.cancel();
+    }
+
+    states.delete(target);
+    target.style.backgroundPosition = basePosition;
+  };
+
+  const startSheen = (target) => {
+    if (reducedMotion || states.has(target)) return;
+
+    target.style.backgroundPosition = basePosition;
+
+    const state = {
+      firstTimer: null,
+      interval: null,
+      animation: null
+    };
+
+    states.set(target, state);
+
+    state.firstTimer = window.setTimeout(() => {
+      if (states.get(target) !== state) return;
+
+      runSweep(target, state);
+
+      state.interval = window.setInterval(() => {
+        if (states.get(target) === state) {
+          runSweep(target, state);
+        }
+      }, 4000);
+    }, 2000);
+  };
+
+  if (reducedMotion) return;
+
+  if (!("IntersectionObserver" in window)) {
+    targets.forEach(startSheen);
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        startSheen(entry.target);
+      } else {
+        stopSheen(entry.target);
+      }
+    }
+  }, {
+    root: null,
+    threshold: 0
+  });
+
+  targets.forEach((target) => {
+    target.style.backgroundPosition = basePosition;
+    observer.observe(target);
+  });
+})();
+
+
 /* One-shot viewport reveals */
 (() => {
   const targets = Array.from(document.querySelectorAll(".reveal-target"));

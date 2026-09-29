@@ -2781,29 +2781,9 @@ body.is-revealed.is-instant-reveal .site-shell {
   content: none !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  [data-gold-sheen] {
-    animation: gold-text-sheen 8.8s ease-in-out 1.5s infinite;
-  }
-}
-
-@keyframes gold-text-sheen {
-  0%,
-  10% {
-    background-position: -120% 50%, 42% 50%, 50% 50%;
-  }
-
-  16% {
-    background-position: -30% 50%, 42% 50%, 50% 50%;
-  }
-
-  34% {
-    background-position: 150% 50%, 42% 50%, 50% 50%;
-  }
-
-  42%,
-  100% {
-    background-position: 180% 50%, 42% 50%, 50% 50%;
-  }
+/* Gold sheen timing is driven from app.js so it can start on viewport entry
+   without replacing each element's own CSS animations. */
+[data-gold-sheen] {
+  will-change: background-position;
 }
 
