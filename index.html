@@ -124,7 +124,7 @@
 
           <h1 class="campaign-title">
             <span>GOLDEN</span>
-            <span class="campaign-title__gold">TICKET</span>
+            <span class="campaign-title__gold" data-gold-sheen="TICKET">TICKET</span>
           </h1>
 
           <p class="campaign-hero__body">
@@ -149,10 +149,17 @@
     <section class="campaign-section prize-section" id="beneficio">
       <div class="campaign-container prize-grid">
         <div class="prize-copy reveal-target">
-          <h2 class="prize-title">
-            <span>50% OFF</span>
-            <small>EN EL COMBINADO<br />ANIVERSARIO 25P</small>
+          <p class="prize-kicker">BENEFICIO GOLDEN TICKET</p>
+
+          <h2 class="prize-title" aria-label="50% OFF">
+            <span class="prize-title__number" data-gold-sheen="50%">50%</span>
+            <span class="prize-title__off">OFF</span>
           </h2>
+
+          <div class="prize-meta">
+            <p class="prize-product">EN EL COMBINADO<br />ANIVERSARIO 25P</p>
+            <p class="prize-order">PARA TU PRÓXIMO PEDIDO ONLINE</p>
+          </div>
         </div>
 
         <div class="prize-media media-slot media-slot--prize" aria-hidden="true">
@@ -209,10 +216,12 @@
 
         <div class="anniversary-copy reveal-target">
           <h2>
-            <span>25 AÑOS</span>
-            <span>DE MOMENTOS</span>
-            <span>ÚNICOS</span>
+            <span data-gold-sheen="25 AÑOS">25 AÑOS</span>
+            <span>DE MOMENTOS ÚNICOS</span>
           </h2>
+          <p class="anniversary-copy__body">
+            Hace 25 años hacemos de cada encuentro un momento único. Este aniversario lo celebramos con una edición especial pensada para seguir compartiendo alrededor del sushi.
+          </p>
         </div>
       </div>
     </section>
@@ -242,7 +251,7 @@
           <article class="info-item reveal-target">
             <span class="material-symbols-outlined info-google-icon" aria-hidden="true">credit_card</span>
             <div class="info-item__copy">
-              <strong>Acumulable</strong>
+              <strong>Válido</strong>
               <p>Solo con Galicia Éminent.</p>
             </div>
           </article>
@@ -274,7 +283,7 @@
           <div class="order-banner__content">
             <h2 class="order-banner__title">
               <span class="order-banner__title-main">CONSEGUÍ</span>
-              <span class="order-banner__title-gold">EL TUYO</span>
+              <span class="order-banner__title-gold" data-gold-sheen="EL TUYO">EL TUYO</span>
             </h2>
 
             <a href="#" class="order-banner__cta">
@@ -288,7 +297,61 @@
 
     <footer class="campaign-footer">
       <div class="campaign-container campaign-footer__inner">
-        <img src="./assets/sushiclub.svg" alt="SushiClub" />
+        <div class="campaign-footer__top">
+          <a
+            class="campaign-footer__brand"
+            href="https://www.sushiclub.com.ar/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Ir al sitio de SushiClub"
+          >
+            <img src="./assets/sushiclub.svg" alt="SushiClub" />
+          </a>
+
+          <nav class="campaign-footer__social" aria-label="Redes sociales">
+            <a
+              href="https://www.facebook.com/sushiclubargentina"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="SushiClub en Facebook"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M13.7 22v-8.2h2.8l.4-3.2h-3.2v-2c0-.9.3-1.6 1.7-1.6H17V4.1c-.7-.1-1.5-.2-2.3-.2-2.3 0-3.9 1.4-3.9 4v2.2H8v3.2h2.8V22h2.9Z"/>
+              </svg>
+            </a>
+            <a
+              href="https://www.instagram.com/SushiClub_ar"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="SushiClub en Instagram"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7.1 2h9.8A5.1 5.1 0 0 1 22 7.1v9.8a5.1 5.1 0 0 1-5.1 5.1H7.1A5.1 5.1 0 0 1 2 16.9V7.1A5.1 5.1 0 0 1 7.1 2Zm-.2 2A2.9 2.9 0 0 0 4 6.9v10.2A2.9 2.9 0 0 0 6.9 20h10.2a2.9 2.9 0 0 0 2.9-2.9V6.9A2.9 2.9 0 0 0 17.1 4H6.9Zm10.7 1.6a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4ZM12 7.1A4.9 4.9 0 1 1 7.1 12 4.9 4.9 0 0 1 12 7.1Zm0 2A2.9 2.9 0 1 0 14.9 12 2.9 2.9 0 0 0 12 9.1Z"/>
+              </svg>
+            </a>
+            <a
+              href="https://www.tiktok.com/@sushiclub_ar"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="SushiClub en TikTok"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14.4 2h3.1c.2 1.4 1 2.6 2.1 3.4.8.6 1.7.9 2.4 1v3.1a8.7 8.7 0 0 1-4.5-1.4v7.2a6.4 6.4 0 1 1-6.4-6.4c.5 0 1 .1 1.5.2v3.2a3.3 3.3 0 1 0 1.8 3V2Z"/>
+              </svg>
+            </a>
+          </nav>
+        </div>
+
+        <div class="campaign-footer__divider" aria-hidden="true"></div>
+
+        <div class="campaign-footer__bottom">
+          <p>© 2026 SushiClub. Todos los derechos reservados.</p>
+          <a
+            href="https://www.sushiclub.com.ar/terminos_y_condiciones.php"
+            target="_blank"
+            rel="noopener noreferrer"
+          >TÉRMINOS Y CONDICIONES</a>
+        </div>
       </div>
     </footer>
     </div>
