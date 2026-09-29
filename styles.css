@@ -901,91 +901,90 @@ body.is-revealed.is-instant-reveal .site-shell {
   z-index: 1;
   min-height: inherit;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .prize-copy {
-  width: min(100%, 680px);
-  padding: clamp(54px, 6vw, 96px) 0;
-}
-
-.prize-kicker {
-  margin: 0 0 clamp(22px, 2.2vw, 34px);
-  font-family: var(--font-label);
-  font-size: clamp(.64rem, .7vw, .78rem);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: .28em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, .72);
+  width: min(100%, 760px);
+  padding: clamp(64px, 6vw, 92px) 0 0;
 }
 
 .prize-title {
   margin: 0;
-  display: flex;
-  align-items: baseline;
-  gap: clamp(10px, 1.1vw, 18px);
+  display: block;
   width: max-content;
+  max-width: none;
+  padding: .045em .035em .035em .045em;
+  overflow: visible;
   font-family: "Field Gothic XXXCond", var(--font-display);
   font-weight: 900;
+  line-height: .76;
+  letter-spacing: .008em;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
-.prize-title__number {
-  font-size: clamp(8.5rem, 14vw, 16rem);
-  line-height: .68;
-  letter-spacing: -.018em;
-  background-image: var(--gold-text-gradient);
-  background-size: 170% 145%, 115% 115%;
-  background-position: 41% 50%, 50% 50%;
+.prize-title__amount {
+  display: block;
+  width: max-content;
+  max-width: none;
+  padding: 0;
+  overflow: visible;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: clamp(7rem, 10.6vw, 12.4rem);
+  line-height: .76;
+  letter-spacing: .018em;
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,.04) 10%,
+      rgba(255,255,255,.16) 24%,
+      rgba(255,255,255,.42) 42%,
+      rgba(255,255,255,.82) 50%,
+      rgba(255,255,255,.42) 58%,
+      rgba(255,255,255,.16) 76%,
+      rgba(255,255,255,.04) 90%,
+      transparent 100%
+    ),
+    var(--gold-text-gradient);
+  background-size: 34% 100%, 170% 145%, 115% 115%;
+  background-position: -80% 50%, 41% 50%, 50% 50%;
   background-repeat: no-repeat;
   color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 8px rgba(83, 48, 8, .18));
-}
-
-.prize-title__off {
-  font-size: clamp(5.8rem, 9.4vw, 10.8rem);
-  line-height: .72;
-  letter-spacing: -.01em;
-  color: #fff;
+  filter: drop-shadow(0 1px 2px rgba(70,42,12,.12));
 }
 
 .prize-meta {
-  margin-top: clamp(30px, 3.4vw, 48px);
-  padding-top: clamp(20px, 2vw, 28px);
-  width: min(100%, 540px);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: clamp(24px, 3vw, 54px);
-  border-top: 1px solid rgba(255, 255, 255, .25);
+  margin-top: clamp(8px, 1vw, 16px);
+  padding-top: 0;
+  width: min(100%, 680px);
+  border-top: 0;
 }
 
-.prize-product {
+.prize-product,
+.prize-order {
   margin: 0;
   font-family: "Field Gothic XXCond", var(--font-display);
-  font-size: clamp(2.15rem, 3.2vw, 3.8rem);
   font-weight: 700;
-  line-height: .88;
-  letter-spacing: .005em;
   text-transform: uppercase;
   color: #fff;
 }
 
+.prize-product {
+  font-size: clamp(2.5rem, 3.8vw, 4.6rem);
+  line-height: .9;
+  letter-spacing: .002em;
+}
+
 .prize-order {
-  margin: 0 0 .12em;
-  max-width: 18ch;
-  font-family: var(--font-label);
-  font-size: clamp(.58rem, .68vw, .72rem);
-  font-weight: 600;
-  line-height: 1.45;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, .68);
+  margin-top: clamp(8px, .8vw, 14px);
+  font-size: clamp(1.7rem, 2.4vw, 2.9rem);
+  line-height: .92;
+  letter-spacing: .004em;
 }
 
 .prize-media {
@@ -1813,56 +1812,56 @@ body.is-revealed.is-instant-reveal .site-shell {
   .prize-section::before {
     background:
       linear-gradient(180deg,
-        rgba(1, 10, 25, .18) 0%,
-        rgba(1, 10, 25, .05) 30%,
-        rgba(1, 10, 25, .62) 58%,
-        rgba(1, 10, 25, .94) 100%);
+        rgba(1, 10, 25, .72) 0%,
+        rgba(1, 10, 25, .48) 26%,
+        rgba(1, 10, 25, .12) 48%,
+        rgba(1, 10, 25, .10) 70%,
+        rgba(1, 10, 25, .42) 100%);
   }
 
   .prize-grid {
     min-height: 700px;
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
   }
 
   .prize-copy {
     width: 100%;
-    padding: 0 0 58px;
-  }
-
-  .prize-kicker {
-    margin-bottom: 18px;
-    font-size: .6rem;
-    letter-spacing: .24em;
+    padding: 62px 0 0;
   }
 
   .prize-title {
-    gap: 10px;
+    width: max-content;
+    max-width: none;
+    padding: .045em .02em .035em .02em;
+    overflow: visible;
   }
 
-  .prize-title__number {
-    font-size: clamp(7rem, 30vw, 10rem);
-  }
-
-  .prize-title__off {
-    font-size: clamp(4.7rem, 20vw, 6.8rem);
+  .prize-title__amount {
+    width: max-content;
+    max-width: none;
+    padding: 0;
+    overflow: visible;
+    font-size: clamp(4.9rem, 20.5vw, 6.7rem);
+    line-height: .76;
+    letter-spacing: .018em;
   }
 
   .prize-meta {
-    margin-top: 26px;
-    padding-top: 18px;
+    margin-top: 8px;
+    padding-top: 0;
     width: 100%;
-    grid-template-columns: 1fr;
-    gap: 16px;
   }
 
   .prize-product {
-    font-size: clamp(2.5rem, 11vw, 4rem);
+    font-size: clamp(2rem, 8.8vw, 3rem);
+    line-height: .92;
   }
 
   .prize-order {
-    max-width: none;
-    font-size: .6rem;
+    margin-top: 8px;
+    font-size: clamp(1.25rem, 5.6vw, 1.9rem);
+    line-height: .94;
   }
 
   .prize-media {
@@ -2743,46 +2742,40 @@ body.is-revealed.is-instant-reveal .site-shell {
 }
 
 
-/* Gold text sheen — ported from Sushi Libre 2 CTA timing */
+/* Gold text sheen — animated inside the glyphs, no duplicated text layer */
 [data-gold-sheen] {
   position: relative;
-  isolation: isolate;
+  isolation: auto;
+  overflow: visible;
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, .04) 10%,
+      rgba(255, 255, 255, .16) 24%,
+      rgba(255, 255, 255, .42) 42%,
+      rgba(255, 255, 255, .82) 50%,
+      rgba(255, 255, 255, .42) 58%,
+      rgba(255, 255, 255, .16) 76%,
+      rgba(255, 255, 255, .04) 90%,
+      transparent 100%
+    ),
+    var(--gold-text-gradient);
+  background-size: 30% 100%, 170% 145%, 115% 115%;
+  background-position: -120% 50%, 42% 50%, 50% 50%;
+  background-repeat: no-repeat;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 [data-gold-sheen]::after {
-  content: attr(data-gold-sheen);
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  display: block;
-  width: 100%;
-  pointer-events: none;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.05) 10%,
-    rgba(255, 255, 255, 0.18) 24%,
-    rgba(255, 255, 255, 0.46) 42%,
-    rgba(255, 255, 255, 0.82) 50%,
-    rgba(255, 255, 255, 0.46) 58%,
-    rgba(255, 255, 255, 0.18) 76%,
-    rgba(255, 255, 255, 0.05) 90%,
-    transparent 100%
-  );
-  background-size: 34% 100%;
-  background-position: -80% 50%;
-  background-repeat: no-repeat;
-  -webkit-background-clip: text;
-  background-clip: text;
-  opacity: 0;
-  filter: blur(.6px);
-  will-change: background-position, opacity;
+  content: none !important;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  [data-gold-sheen]::after {
+  [data-gold-sheen] {
     animation: gold-text-sheen 8.8s ease-in-out 1.5s infinite;
   }
 }
@@ -2790,22 +2783,20 @@ body.is-revealed.is-instant-reveal .site-shell {
 @keyframes gold-text-sheen {
   0%,
   10% {
-    background-position: -80% 50%;
-    opacity: 0;
+    background-position: -120% 50%, 42% 50%, 50% 50%;
   }
 
   16% {
-    opacity: .82;
+    background-position: -30% 50%, 42% 50%, 50% 50%;
   }
 
   34% {
-    background-position: 180% 50%;
-    opacity: .58;
+    background-position: 150% 50%, 42% 50%, 50% 50%;
   }
 
   42%,
   100% {
-    background-position: 180% 50%;
-    opacity: 0;
+    background-position: 180% 50%, 42% 50%, 50% 50%;
   }
 }
+
