@@ -1803,10 +1803,10 @@ body.is-revealed.is-instant-reveal .site-shell {
   }
 
   .prize-section {
-    min-height: 700px;
+    min-height: 660px;
     padding: 0;
     background-size: cover;
-    background-position: 58% center;
+    background-position: 50% center;
   }
 
   .prize-section::before {
@@ -1820,14 +1820,14 @@ body.is-revealed.is-instant-reveal .site-shell {
   }
 
   .prize-grid {
-    min-height: 700px;
+    min-height: 660px;
     display: flex;
     align-items: flex-start;
   }
 
   .prize-copy {
     width: 100%;
-    padding: 58px 0 0;
+    padding: 78px 0 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1847,7 +1847,7 @@ body.is-revealed.is-instant-reveal .site-shell {
     max-width: none;
     padding: 0;
     overflow: visible;
-    font-size: clamp(6rem, 25vw, 8.2rem);
+    font-size: clamp(6.5rem, 28vw, 9.2rem);
     line-height: .76;
     letter-spacing: .018em;
   }
