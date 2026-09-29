@@ -6,8 +6,9 @@
   <meta name="theme-color" content="#050505" />
   <title>Golden Ticket</title>
   <script>document.documentElement.classList.add("has-js");</script>
-  <link rel="preload" href="./assets/bg_hero.mp4" as="video" type="video/mp4" media="(min-width: 761px)" />
-  <link rel="preload" href="./assets/bg_hero_mobile.mp4" as="video" type="video/mp4" media="(max-width: 760px)" />
+  <link rel="preload" href="./assets/bg_hero.mp4" as="video" type="video/mp4" />
+  <link rel="preload" href="./assets/bg_hero_mobile.mp4" as="video" type="video/mp4" />
+  <link rel="preload" href="./assets/25.mp4" as="video" type="video/mp4" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -51,24 +52,24 @@
     <section class="campaign-hero">
       <video
         class="campaign-hero__video campaign-hero__video--desktop"
-        data-src="./assets/bg_hero.mp4"
+        src="./assets/bg_hero.mp4"
         poster="./assets/Generate_alternative_camera_angl…_2K_20260925014050.jpg"
         autoplay
         muted
         loop
         playsinline
-        preload="none"
+        preload="auto"
         aria-hidden="true"
       ></video>
 
       <video
         class="campaign-hero__video campaign-hero__video--mobile"
-        data-src="./assets/bg_hero_mobile.mp4"
+        src="./assets/bg_hero_mobile.mp4"
         autoplay
         muted
         loop
         playsinline
-        preload="none"
+        preload="auto"
         aria-hidden="true"
       ></video>
 
@@ -129,7 +130,7 @@
 
           <p class="campaign-hero__body">
             <span class="campaign-hero__body-desktop">Encontralo en tu pedido y obtené $25.000 para usar en el Combinado Aniversario 25p de tu próximo pedido online.</span>
-            <span class="campaign-hero__body-mobile">Encontrá tu Golden Ticket y obtené $25.000 para usar en el Combinado Aniversario 25p de tu próximo pedido.</span>
+            <span class="campaign-hero__body-mobile">Encontrá tu Golden Ticket y obtené $25.000 para tu próximo Combinado Aniversario 25p.</span>
           </p>
 
           <a class="campaign-button campaign-button--light" href="#pedido">
@@ -203,6 +204,7 @@
           muted
           loop
           playsinline
+          preload="auto"
         ></video>
       </div>
 

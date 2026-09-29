@@ -193,61 +193,131 @@
 })();
 
 
-/* Hero video: load only the active breakpoint */
+/* Background videos: eager loading + resilient muted autoplay */
 (() => {
   const desktopVideo = document.querySelector(".campaign-hero__video--desktop");
   const mobileVideo = document.querySelector(".campaign-hero__video--mobile");
-  if (!desktopVideo || !mobileVideo) return;
+  const anniversaryVideo = document.querySelector(".anniversary-section__video");
+  const videos = [desktopVideo, mobileVideo, anniversaryVideo].filter(Boolean);
+
+  if (!videos.length) return;
 
   const mobileQuery = window.matchMedia("(max-width: 760px)");
-  let activeVideo = null;
 
-  const unloadVideo = (video) => {
-    video.onloadeddata = null;
-    video.classList.remove("is-ready");
-    video.pause();
-    video.removeAttribute("src");
-    video.load();
+  const prepareVideo = (video) => {
+    video.autoplay = true;
+    video.loop = true;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.preload = "auto";
+
+    video.setAttribute("autoplay", "");
+    video.setAttribute("loop", "");
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("preload", "auto");
   };
 
-  const loadVideo = (video) => {
-    const src = video.dataset.src;
-    if (!src) return;
+  const isInactiveHero = (video) => {
+    if (video === desktopVideo) return mobileQuery.matches;
+    if (video === mobileVideo) return !mobileQuery.matches;
+    return false;
+  };
 
-    video.classList.remove("is-ready");
-
-    const revealAndPlay = () => {
+  const markReady = (video) => {
+    if (video === desktopVideo || video === mobileVideo) {
       video.classList.add("is-ready");
-      const playPromise = video.play();
-      if (playPromise && typeof playPromise.catch === "function") {
-        playPromise.catch(() => {});
-      }
-    };
-
-    video.onloadeddata = revealAndPlay;
-
-    if (video.getAttribute("src") !== src) {
-      video.setAttribute("src", src);
-      video.load();
     }
+  };
+
+  const tryPlay = (video) => {
+    if (!video || isInactiveHero(video)) return;
+
+    prepareVideo(video);
 
     if (video.readyState >= 2) {
-      revealAndPlay();
+      markReady(video);
+    }
+
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {
+        // Some embedded browsers only allow playback after the first user gesture.
+        // Gesture listeners below retry immediately when that becomes possible.
+      });
     }
   };
 
   const syncHeroVideo = () => {
-    const nextVideo = mobileQuery.matches ? mobileVideo : desktopVideo;
-    const previousVideo = nextVideo === mobileVideo ? desktopVideo : mobileVideo;
+    const activeVideo = mobileQuery.matches ? mobileVideo : desktopVideo;
+    const inactiveVideo = activeVideo === mobileVideo ? desktopVideo : mobileVideo;
 
-    if (activeVideo === nextVideo && nextVideo.hasAttribute("src")) return;
+    if (inactiveVideo) {
+      inactiveVideo.pause();
+    }
 
-    unloadVideo(previousVideo);
-    loadVideo(nextVideo);
-    activeVideo = nextVideo;
+    tryPlay(activeVideo);
   };
 
-  syncHeroVideo();
+  const retryAll = () => {
+    syncHeroVideo();
+    tryPlay(anniversaryVideo);
+  };
+
+  videos.forEach((video) => {
+    prepareVideo(video);
+
+    // Start fetching immediately, even when the video is outside the viewport.
+    if (video.readyState === 0) {
+      video.load();
+    }
+
+    ["loadedmetadata", "loadeddata", "canplay", "playing"].forEach((eventName) => {
+      video.addEventListener(eventName, () => {
+        markReady(video);
+        tryPlay(video);
+      }, { passive: true });
+    });
+  });
+
+  retryAll();
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", retryAll, { once: true });
+  }
+
+  window.addEventListener("load", retryAll, { once: true });
+  window.addEventListener("pageshow", retryAll);
+  window.addEventListener("focus", retryAll);
+  window.addEventListener("online", retryAll);
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) retryAll();
+  });
+
+  ["pointerdown", "touchstart", "click", "keydown"].forEach((eventName) => {
+    document.addEventListener(eventName, retryAll, {
+      passive: true,
+      capture: true
+    });
+  });
+
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          tryPlay(entry.target);
+        }
+      }
+    }, {
+      root: null,
+      rootMargin: "240px 0px",
+      threshold: 0
+    });
+
+    videos.forEach((video) => observer.observe(video));
+  }
 
   if (typeof mobileQuery.addEventListener === "function") {
     mobileQuery.addEventListener("change", syncHeroVideo);
@@ -256,40 +326,6 @@
   }
 })();
 
-
-/* Pause background videos while offscreen */
-(() => {
-  if (!("IntersectionObserver" in window)) return;
-
-  const videos = [
-    document.querySelector(".campaign-hero__video--desktop"),
-    document.querySelector(".campaign-hero__video--mobile"),
-    document.querySelector(".anniversary-section__video")
-  ].filter(Boolean);
-
-  const observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      const video = entry.target;
-
-      if (entry.isIntersecting && entry.intersectionRatio > 0.05) {
-        if (video.hasAttribute("src")) {
-          const playPromise = video.play();
-          if (playPromise && typeof playPromise.catch === "function") {
-            playPromise.catch(() => {});
-          }
-        }
-      } else {
-        video.pause();
-      }
-    }
-  }, {
-    root: null,
-    rootMargin: "120px 0px",
-    threshold: [0, 0.05]
-  });
-
-  videos.forEach((video) => observer.observe(video));
-})();
 
 /* One-shot viewport reveals */
 (() => {
