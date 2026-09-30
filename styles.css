@@ -2473,7 +2473,8 @@ body.is-revealed.is-instant-reveal .site-shell {
     top: auto;
     bottom: 0;
     height: auto;
-    width: clamp(420px, calc(26.6667vw + 297.33px), 500px);
+    /* width: clamp(420px, calc(26.6667vw + 297.33px), 500px); */
+    width: clamp(420px, calc(26.6667vw + 297.33px), 460px);
   }
 
   .order-banner__hand {
