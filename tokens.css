@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Field Gothic";
-  src: url("./fonts/FieldGothic-Regular.otf") format("opentype");
+  src: url("./fonts/Field Gothic No.62 Regular.otf") format("opentype");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -8,7 +8,7 @@
 
 @font-face {
   font-family: "Field Gothic";
-  src: url("./fonts/FieldGothic-Demi.otf") format("opentype");
+  src: url("./fonts/Field Gothic No.64 Demi.otf") format("opentype");
   font-style: normal;
   font-weight: 600;
   font-display: swap;
@@ -16,7 +16,7 @@
 
 @font-face {
   font-family: "Field Gothic";
-  src: url("./fonts/FieldGothic-Bold.otf") format("opentype");
+  src: url("./fonts/Field Gothic No.65 Bold.otf") format("opentype");
   font-style: normal;
   font-weight: 700;
   font-display: swap;
@@ -58,14 +58,6 @@
   font-family: "Inter";
   src: url("./fonts/Inter-Variable.ttf") format("truetype");
   font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Inter";
-  src: url("./fonts/Inter-Italic-Variable.ttf") format("truetype");
-  font-style: italic;
   font-weight: 100 900;
   font-display: swap;
 }

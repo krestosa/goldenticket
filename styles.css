@@ -595,10 +595,6 @@ body.is-revealed.is-instant-reveal .site-shell {
   isolation: isolate;
   overflow: hidden;
   background-color: #030303;
-  background-image: url("./assets/Generate_alternative_camera_angl…_2K_20260925014050.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 
 .campaign-hero__video {
@@ -910,6 +906,18 @@ body.is-revealed.is-instant-reveal .site-shell {
       rgba(0, 0, 0, .18) 100%);
 }
 
+@media (min-width: 761px) {
+  .prize-section {
+    background-image: none;
+  }
+
+  .prize-section::before {
+    background: url("./assets/50_bg.png") center center / cover no-repeat;
+    transform: translateX(7%) scale(1.18);
+    transform-origin: center center;
+  }
+}
+
 .prize-grid {
   position: relative;
   z-index: 1;
@@ -991,6 +999,7 @@ body.is-revealed.is-instant-reveal .site-shell {
   font-size: clamp(2.5rem, 3.8vw, 4.6rem);
   line-height: .9;
   letter-spacing: .002em;
+  white-space: nowrap;
 }
 
 .prize-order {
@@ -1425,9 +1434,9 @@ body.is-revealed.is-instant-reveal .site-shell {
   gap: 24px;
   font-family: var(--font-label);
   font-size: .68rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.4;
-  letter-spacing: .08em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: rgba(255,255,255,.62);
 }
@@ -1549,6 +1558,8 @@ body.is-revealed.is-instant-reveal .site-shell {
     max-width: 660px;
     padding-right: 0;
     justify-self: start;
+    align-self: end;
+    margin-bottom: -48px;
   }
 
   .anniversary-copy::before {
@@ -1616,7 +1627,7 @@ body.is-revealed.is-instant-reveal .site-shell {
   }
 
   .campaign-title {
-    --hero-title-size: clamp(104px, 13vw, 240px);
+    --hero-title-size: clamp(150px, 16vw, 240px);
     display: flex;
     flex-direction: row;
     align-items: baseline;
@@ -1641,6 +1652,10 @@ body.is-revealed.is-instant-reveal .site-shell {
 }
 
 @media (min-width: 761px) and (max-width: 1200px) {
+  .campaign-hero__video--desktop {
+    object-position: clamp(88%, calc(64% + 3vw), 100%) center;
+  }
+
   .anniversary-copy {
     max-width: 560px;
   }
@@ -1871,12 +1886,13 @@ body.is-revealed.is-instant-reveal .site-shell {
   .prize-meta {
     margin-top: 14px;
     padding-top: 0;
-    width: min(100%, 360px);
+    width: max-content;
+    max-width: calc(100vw - 24px);
     text-align: center;
   }
 
   .prize-product {
-    font-size: clamp(2.35rem, 10.3vw, 3.55rem);
+    font-size: clamp(2rem, 9.2vw, 3.55rem);
     line-height: .9;
   }
 
