@@ -1698,9 +1698,12 @@ body.is-revealed.is-instant-reveal .site-shell {
   }
 
   .anniversary-section {
-    --anniversary-video-x: 35%;
-    --anniversary-video-y: 78%;
-    --anniversary-video-scale: 1.5;
+    /* --anniversary-video-x: 35%; */
+    /* --anniversary-video-y: 78%; */
+    /* --anniversary-video-scale: 1.5; */
+    --anniversary-video-x: 27%;
+    --anniversary-video-y: 100%;
+    --anniversary-video-scale: 1.1;
   }
 
   .campaign-container,
