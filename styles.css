@@ -1,4 +1,4 @@
-@import url("./tokens.css");
+@import url("./tokens.css?v=20260930-1");
 
 * { box-sizing: border-box; }
 
@@ -880,7 +880,7 @@ body.is-revealed.is-instant-reveal .site-shell {
   padding: 0;
   overflow: hidden;
   background-color: #03142d;
-  background-image: url("./assets/50_bg.png");
+  background-image: url("./assets/50_bg.png?v=20260930-1");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -912,7 +912,7 @@ body.is-revealed.is-instant-reveal .site-shell {
   }
 
   .prize-section::before {
-    background: url("./assets/50_bg.png") center center / cover no-repeat;
+    background: url("./assets/50_bg.png?v=20260930-1") center center / cover no-repeat;
     transform: translateX(7%) scale(1.18);
     transform-origin: center center;
   }
@@ -952,37 +952,19 @@ body.is-revealed.is-instant-reveal .site-shell {
   overflow: visible;
   font-family: inherit;
   font-weight: inherit;
-  font-size: clamp(7rem, 10.6vw, 12.4rem);
+  font-size: clamp(8.5rem, 12.4vw, 14.5rem);
   line-height: .76;
   letter-spacing: .018em;
-  background-image:
-    linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255,255,255,.04) 10%,
-      rgba(255,255,255,.16) 24%,
-      rgba(255,255,255,.42) 42%,
-      rgba(255,255,255,.82) 50%,
-      rgba(255,255,255,.42) 58%,
-      rgba(255,255,255,.16) 76%,
-      rgba(255,255,255,.04) 90%,
-      transparent 100%
-    ),
-    var(--gold-text-gradient);
-  background-size: 34% 100%, 170% 145%, 115% 115%;
-  background-position: -80% 50%, 41% 50%, 50% 50%;
-  background-repeat: no-repeat;
-  color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 1px 2px rgba(70,42,12,.12));
+  background: none;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  filter: none;
 }
 
 .prize-meta {
   margin-top: clamp(8px, 1vw, 16px);
   padding-top: 0;
-  width: min(100%, 680px);
+  width: min(100%, 820px);
   border-top: 0;
 }
 
@@ -996,7 +978,7 @@ body.is-revealed.is-instant-reveal .site-shell {
 }
 
 .prize-product {
-  font-size: clamp(2.5rem, 3.8vw, 4.6rem);
+  font-size: clamp(3.1rem, 4.5vw, 5.5rem);
   line-height: .9;
   letter-spacing: .002em;
   white-space: nowrap;
@@ -1004,7 +986,7 @@ body.is-revealed.is-instant-reveal .site-shell {
 
 .prize-order {
   margin-top: clamp(8px, .8vw, 14px);
-  font-size: clamp(1.7rem, 2.4vw, 2.9rem);
+  font-size: clamp(2.05rem, 2.9vw, 3.5rem);
   line-height: .92;
   letter-spacing: .004em;
 }
@@ -2220,7 +2202,7 @@ body.is-revealed.is-instant-reveal .site-shell {
   inset: -20px;
   background-image:
     linear-gradient(90deg, rgba(2, 16, 43, .04) 0%, rgba(2, 16, 43, .01) 48%, rgba(2, 12, 34, .12) 100%),
-    url("./assets/Change_camera_angle_perspective_2K_20260928082533.jpg");
+    url("./assets/Change_camera_angle_perspective_2K_20260928082533.jpg?v=20260930-1");
   background-position: 50% 50%, 50% 50%;
   background-size: cover, cover;
   background-repeat: no-repeat, no-repeat;
@@ -2763,7 +2745,7 @@ body.is-revealed.is-instant-reveal .site-shell {
     inset: 0;
     background-image:
       linear-gradient(90deg, rgba(2, 16, 43, .06) 0%, rgba(2, 16, 43, .02) 48%, rgba(2, 12, 34, .14) 100%),
-      url("./assets/cta_bg_blur.jpg");
+      url("./assets/cta_bg_blur.jpg?v=20260930-1");
     background-position: center, center;
     background-size: cover, cover;
     background-repeat: no-repeat, no-repeat;
